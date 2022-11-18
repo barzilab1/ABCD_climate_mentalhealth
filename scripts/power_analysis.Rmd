@@ -1,0 +1,95 @@
+---
+title: "Untitled"
+author: "Kate Tran"
+date: "10/28/2022"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(dplyr)
+library(WebPower)
+library(tidyr)
+```
+
+
+```{r}
+# if only testing 1 DV and 1 IV, then should use correlation as effect size
+res0 <- wp.correlation(n = 1000, r = c(0.001, 0.002, 0.003, 0.004, 0.005, 0.01, 0.05, 0.07, 0.1, 0.2, 0.5, 0.8), power = NULL, p = 0, rho0 = 0,
+alpha = 0.05, alternative = c("two.sided"))
+
+res1 <- wp.correlation(n = 2000, r = c(0.001, 0.002, 0.003, 0.004, 0.005, 0.01, 0.05, 0.07, 0.1, 0.2, 0.5, 0.8), power = NULL, p = 0, rho0 = 0,
+alpha = 0.05, alternative = c("two.sided"))
+
+res2 <- wp.correlation(n = 5000, r = c(0.001, 0.002, 0.003, 0.004, 0.005, 0.01, 0.05, 0.07, 0.1, 0.2, 0.5, 0.8), power = NULL, p = 0, rho0 = 0,
+alpha = 0.05, alternative = c("two.sided"))
+
+res3 <- wp.correlation(n = 7000, r = c(0.001, 0.002, 0.003, 0.004, 0.005, 0.01, 0.05, 0.07, 0.1, 0.2, 0.5, 0.8), power = NULL, p = 0, rho0 = 0,
+alpha = 0.05, alternative = c("two.sided"))
+
+
+res_dat <- data.frame(
+  "n" = res0$n,
+  "r" = res0$r,
+  "alpha" = res0$alpha,
+  "power" = res0$power
+) %>% 
+  bind_rows(
+    data.frame(
+      "n" = res1$n,
+      "r" = res0$r,
+      "alpha" = res1$alpha,
+      "power" = res1$power
+    )) %>% 
+  bind_rows(
+    data.frame(
+      "n" = res2$n,
+      "r" = res0$r,
+      "alpha" = res2$alpha,
+      "power" = res2$power
+    )) %>% 
+  bind_rows(
+    data.frame(
+      "n" = res3$n,
+      "r" = res0$r,
+      "alpha" = res3$alpha,
+      "power" = res3$power
+    ))
+
+res_dat <- res_dat %>% 
+  mutate(
+    n = case_when(n == 1000 ~ "N = 1,000",
+                  n == 2000 ~ "N = 2,000",
+                  n == 5000 ~ "N = 5,000", 
+                  n == 7000 ~ "N = 7,000",
+    ),
+    n = factor(n, c("N = 1,000", "N = 2,000", "N = 5,000", "N = 7,000"))) %>% 
+  rename(`Sample size` = n)
+
+# create the table for Sara
+output <- res_dat %>% 
+  mutate(power = round(power, 4)) %>% 
+  pivot_wider(., 
+              id_cols = r,
+              names_from = `Sample size`,
+              values_from = power) %>% 
+  as_tibble()
+
+# writexl::write_xlsx(output, "../outputs/power_analysis.xlsx")
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
