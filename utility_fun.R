@@ -46,3 +46,72 @@ load_instrument <- function(file_name, file_path) {
   
   return(instrument)
 }
+
+
+
+models <- function(outcome, predictor, variables, var_added) {
+  if (is.null(var_added)) {
+    model <- as.formula(paste0(outcome, " ~", paste0(c(
+      predictor, variables
+    ), collapse = " + "), sep = ""))
+  } else {
+    model <- as.formula(paste0(outcome, " ~", paste0(
+      c(predictor, variables, var_added), collapse = " + "
+    ), sep = ""))
+  }
+  return(model)
+}
+
+
+download_normal_climate <- function(station, mainURL) {
+  
+  urls <- paste0(mainURL, station, ".csv" )
+  
+  
+  station_contents <- list()
+  
+  for (i in 1:length(urls)) {
+    list <-
+      map(urls[i], ~ tryCatch(
+        read.csv(text = getURL(urls[i])),
+        error = function(e)
+          NULL
+      )) %>% plyr::mutate(station = station[i])
+    station_contents[[length(station_contents) + 1]] <-
+      list
+  }
+  names(station_contents) <- station
+  
+  if(str_detect(mainURL, "normals")) {
+    dictionary_merge <-
+      map(station_contents, function(x) x[[1]]) %>%
+      map(., data.frame) %>%
+      map(., function(x) x %>% 
+            dplyr::select(-contains("_flag"))) %>% # not need those columns
+      bind_rows() %>% 
+      clean_names()
+  } else {
+    dictionary_merge <-
+      map(station_contents, function(x) x[[1]]) %>%
+      map(., data.frame) %>%
+      map(., function(x) x %>% 
+            # dplyr::select(-ends_with("_ATTRIBUTES"))) %>% # Those variables are not needed, and diffrent types --> cannot bind data
+            dplyr::mutate(
+              CDSD_ATTRIBUTES = as.integer(x$CDSD_ATTRIBUTES),
+              HDSD_ATTRIBUTES = as.integer(x$HDSD_ATTRIBUTES))) %>%
+      bind_rows() %>% 
+      clean_names()
+  }
+  
+  return(dictionary_merge)
+}
+
+
+create_ever_var <- function(data, search_term, new_col_name) {
+  data <- data %>%
+    mutate(!!new_col_name := apply(data[, grepl(search_term, colnames(data))], 1, function(x) {any(x == 1)*1}))
+  data <- data %>%
+    mutate(!!new_col_name := ifelse((is.na(get(new_col_name)) &
+                                       (apply(data[, which(grepl(search_term, colnames(data)))], 1, function(x) {any(x == 0)}))), 0, get(new_col_name)))
+  return(data)
+}
