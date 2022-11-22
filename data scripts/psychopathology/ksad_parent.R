@@ -1,5 +1,5 @@
 #note: 2-year follow up: there are new features available that weren't tag yet by ran as internal/external and dsm5
-
+library(dplyr)
 source("config.R")
 source("utility_fun.R")
 
@@ -187,78 +187,36 @@ externalize_ksad_p$ksads_externalizing_exclude_attentation_symptoms_sum = extern
 externalize_ksad_p = externalize_ksad_p[,!( grepl("temp_", colnames(externalize_ksad_p)))]
 
 
-
-summary(externalize_ksad_p[externalize_ksad_p$eventname == "baseline_year_1_arm_1",])
-summary(externalize_ksad_p[externalize_ksad_p$eventname == "1_year_follow_up_y_arm_1",])
-
-write.csv(file = "data/externalize_ksad_symptoms_p.csv",x = externalize_ksad_p, row.names=F, na = "")
+# write.csv(file = "data/externalize_ksad_symptoms_p.csv", x = externalize_ksad_p, row.names = F, na = "")
 
 
 
 
 
-#################### externalizing Diagnosis ####################
+#################### Present externalizing symptom ####################
 #unlike suicide, here if 0 or NA then 0
-externalize_diagnosis <- ksad_p[,which(grepl("^(src|inter|event|sex|ksads_1[3-6]_(8|9)(0|2|3|4|5|9)[0-9]_)", colnames(ksad_p)))]
 
-externalize_diagnosis$ksads_ADHD_Diagnosis <- apply(externalize_diagnosis[,which(grepl("ksads_14_(85[3-6])", colnames(externalize_diagnosis)))], 1, function(x) {any(x == 1)*1})
-externalize_diagnosis$ksads_ADHD_Diagnosis = ifelse( (is.na(externalize_diagnosis$ksads_ADHD_Diagnosis) &
-                                                          (apply(externalize_diagnosis[,which(grepl("ksads_14_(85[3-6])", colnames(externalize_diagnosis)))], 1, function(x) {any(x == 0)}))),
-                                                     0, externalize_diagnosis$ksads_ADHD_Diagnosis)
+# ADHD present - 394:409, past: 410:425 (ksads_14_)
+# ADHD exclude attention present - 401:408, past: 417:424 (ksads_14_)
+# ODD present 91, 93, 95, 432:437  - past: 92, 94, 96, 439:444 (ksads_15_)
+# CONDUCT present 98, 100, 102, 104, 106, 447, 449, 451, 453, 455, 457, 459, 461, 463, 465 (ksads_16_)
+## past 99, 101, 103, 105, 107, 448, 450, 452, 454, 456, 458, 460, 462, 464, 466 (ksads_16_)
 
-
-externalize_diagnosis$ksads_ODD_Diagnosis <- apply(externalize_diagnosis[,which(grepl("ksads_15_(901|902)", colnames(externalize_diagnosis)))],1 , function(x) {any(x == 1)*1})
-externalize_diagnosis$ksads_ODD_Diagnosis = ifelse( (is.na(externalize_diagnosis$ksads_ODD_Diagnosis) &
-                                                         (apply(externalize_diagnosis[,which(grepl("ksads_15_(901|902)", colnames(externalize_diagnosis)))], 1, function(x) {any(x == 0)}))),
-                                                    0, externalize_diagnosis$ksads_ODD_Diagnosis)
+# externalize_ksad_p[, grepl("14_(40[1-8])", names(externalize_ksad_p))] %>% names() # ADHD exclude attention
+# externalize_ksad_p[, grepl("15_(9[135])|15_(43[2-7])", names(externalize_ksad_p))] %>% names() # ODD
+# externalize_ksad_p[, grepl("16_(98|(10[0246])|(44[79])|(45[13579])|(46[135]))", names(externalize_ksad_p))] %>% names() # CONDUCT
 
 
-externalize_diagnosis$ksads_CONDUCT_Diagnosis <- apply(externalize_diagnosis[,which(grepl("ksads_16_(897|898|899|900)", colnames(externalize_diagnosis)))], 1, function(x) {any(x == 1)*1})
-externalize_diagnosis$ksads_CONDUCT_Diagnosis = ifelse( (is.na(externalize_diagnosis$ksads_CONDUCT_Diagnosis) &
-                                                             (apply(externalize_diagnosis[,which(grepl("ksads_16_(897|898|899|900)", colnames(externalize_diagnosis)))], 1, function(x) {any(x == 0)}))),
-                                                        0, externalize_diagnosis$ksads_CONDUCT_Diagnosis)
+# Present Ksad externalizing symptom sum scores excluding attention
 
-externalize_diagnosis$ksads_any_externalizing_diagnosis <- (externalize_diagnosis$ksads_ADHD_Diagnosis | externalize_diagnosis$ksads_ODD_Diagnosis | externalize_diagnosis$ksads_CONDUCT_Diagnosis)*1
+externalize_ksad_p <- create_ever_var(data = externalize_ksad_p, search_term = "14_(40[1-8])", "ksads_present_ADHD_exclude_attentation_symptoms_sum")
+externalize_ksad_p <- create_ever_var(data = externalize_ksad_p, search_term = "15_(9[135])|15_(43[2-7])", "ksads_present_ODD_symptoms_sum")
+externalize_ksad_p <- create_ever_var(data = externalize_ksad_p, search_term = "16_(98|(10[0246])|(44[79])|(45[13579])|(46[135]))", "ksads_present_CONDUCT_symptoms_sum")
 
-# externalize_diagnosis$ksads_Alcohol_Substance_Diagnosis <- apply(externalize_diagnosis[,which(grepl("ksads_(19|20)_8[7-9][0-9]", colnames(externalize_diagnosis)))], 1, function(x) {any(x == 1)*1})
-# print(summary(externalize_diagnosis[,which(grepl("ksads_Alcohol_Substance_Diagnosis|ksads_(19|20)_8[7-9][0-9]", colnames(externalize_diagnosis)))]))
+externalize_ksad_p$ksads_present_externalizing_exclude_attentation_symptoms_sum <- 
+  externalize_ksad_p$ksads_present_ADHD_exclude_attentation_symptoms_sum + externalize_ksad_p$ksads_present_ODD_symptoms_sum + externalize_ksad_p$ksads_present_CONDUCT_symptoms_sum
 
-
-summary(externalize_diagnosis[externalize_diagnosis$eventname == "baseline_year_1_arm_1",])
-summary(externalize_diagnosis[externalize_diagnosis$eventname == "1_year_follow_up_y_arm_1",])
-summary(externalize_diagnosis[externalize_diagnosis$eventname == "2_year_follow_up_y_arm_1",])
-
-write.csv(file = "data/externalize_ksad_diagnosis_p.csv",x = externalize_diagnosis, row.names=F, na = "")
-
-#################### Binge Eating Disorder Diagnosis ####################
-
-eating_disorder_diagnosis <- ksad_p[,which(grepl("^(src|inter|event|sex|ksads_13_(939|938|929|934|933|932|931|930|936|935|937|940|943|942|944|941)_)", colnames(ksad_p)))]
-
-eating_disorder_diagnosis$ksads_eating_disorder_diagnosis <- apply(eating_disorder_diagnosis[,which(grepl("ksads", colnames(eating_disorder_diagnosis)))], 1, function(x) {any(x == 1)*1})
-eating_disorder_diagnosis$ksads_eating_disorder_diagnosis = ifelse( (is.na(eating_disorder_diagnosis$ksads_eating_disorder_diagnosis) &
-                                                                         (apply(eating_disorder_diagnosis[,which(grepl("ksads", colnames(eating_disorder_diagnosis)))], 1, function(x) {any(x == 0)}))),
-                                                                    0, eating_disorder_diagnosis$ksads_eating_disorder_diagnosis)
-
-write.csv(file = "data/binge_eating_ksad_diagnosis_p.csv", x = eating_disorder_diagnosis, row.names=F, na = "")
-
-
-#################### PTSD ####################
-#unlike suicide, here if 0 or NA then 0
-ptsd = ksad_p[,which(grepl("^(src|inter|event|sex|ksads_21)", colnames(ksad_p)))]
-
-ptsd$ksads_PTSD_diagnosis = (ptsd$ksads_21_921_p | ptsd$ksads_21_922_p)*1
-ptsd$ksads_trauma_diagnosis = (ptsd$ksads_21_923_p | ptsd$ksads_21_924_p)*1
-ptsd$ksads_any_trauma_diagnosis = (ptsd$ksads_PTSD_diagnosis | ptsd$ksads_trauma_diagnosis)*1
-ptsd$ksads_any_trauma_diagnosis = ifelse(is.na(ptsd$ksads_any_trauma_diagnosis) & (ptsd$ksads_trauma_diagnosis == 0 | ptsd$ksads_PTSD_diagnosis ==0),
-                                         0, ptsd$ksads_any_trauma_diagnosis)
-
-
-ptsd$ksads_ptsd_nightmares = (ptsd$ksads_21_137_p | ptsd$ksads_21_138_p)*1
-ptsd$ksads_ptsd_avoidance = (ptsd$ksads_21_135_p | ptsd$ksads_21_136_p)*1
-ptsd$ksads_ptsd_distress = (ptsd$ksads_21_139_p | ptsd$ksads_21_140_p)*1
-ptsd$ksads_ptsd_symptoms_summary = rowSums(ptsd[,c("ksads_ptsd_nightmares", "ksads_ptsd_avoidance","ksads_ptsd_distress")])
-
-
+write.csv(file = "data/externalize_ksad_symptoms_p.csv", x = externalize_ksad_p, row.names = F, na = "")
 
 
 
