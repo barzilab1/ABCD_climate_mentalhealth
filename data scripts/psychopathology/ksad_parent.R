@@ -209,9 +209,23 @@ externalize_ksad_p = externalize_ksad_p[,!( grepl("temp_", colnames(externalize_
 
 # Present Ksad externalizing symptom sum scores excluding attention
 
-externalize_ksad_p <- create_ever_var(data = externalize_ksad_p, search_term = "14_(40[1-8])", "ksads_present_ADHD_exclude_attentation_symptoms_sum")
-externalize_ksad_p <- create_ever_var(data = externalize_ksad_p, search_term = "15_(9[135])|15_(43[2-7])", "ksads_present_ODD_symptoms_sum")
-externalize_ksad_p <- create_ever_var(data = externalize_ksad_p, search_term = "16_(98|(10[0246])|(44[79])|(45[13579])|(46[135]))", "ksads_present_CONDUCT_symptoms_sum")
+#create summary for adhd symptoms
+externalize_ksad_p$ksads_present_ADHD_exclude_attentation_symptoms_sum <- 
+  rowSums(externalize_ksad_p[, which(grepl("14_(40[1-8])", colnames(externalize_ksad_p)))], na.rm = T)
+# fix rows with all NA (rowSums gave a number to all rows)
+externalize_ksad_p$ksads_present_ADHD_exclude_attentation_symptoms_sum[rowSums(is.na(externalize_ksad_p[, which(grepl("14_(40[1-8])", colnames(externalize_ksad_p), ignore.case=TRUE))])) == 8] <- NA
+
+# summary for ODD
+externalize_ksad_p$ksads_present_ODD_symptoms_sum <- 
+  rowSums(externalize_ksad_p[, which(grepl("15_(9[135])|15_(43[2-7])", colnames(externalize_ksad_p)))], na.rm = T)
+#fix rows with all NA (rowSums gave a number to all rows)
+externalize_ksad_p$ksads_present_ODD_symptoms_sum[rowSums(is.na(externalize_ksad_p[, which(grepl("15_(9[135])|15_(43[2-7])", colnames(externalize_ksad_p), ignore.case=TRUE))])) == 9] <- NA
+
+# summary for CONDUCT
+externalize_ksad_p$ksads_present_CONDUCT_symptoms_sum <- 
+  rowSums(externalize_ksad_p[, which(grepl("16_(98|(10[0246])|(44[79])|(45[13579])|(46[135]))", colnames(externalize_ksad_p)))], na.rm = T)
+#fix rows with all NA (rowSums gave a number to all rows)
+externalize_ksad_p$ksads_present_CONDUCT_symptoms_sum[rowSums(is.na(externalize_ksad_p[, which(grepl("16_(98|(10[0246])|(44[79])|(45[13579])|(46[135]))", colnames(externalize_ksad_p), ignore.case=TRUE))])) == 15] <- NA
 
 externalize_ksad_p$ksads_present_externalizing_exclude_attentation_symptoms_sum <- 
   externalize_ksad_p$ksads_present_ADHD_exclude_attentation_symptoms_sum + externalize_ksad_p$ksads_present_ODD_symptoms_sum + externalize_ksad_p$ksads_present_CONDUCT_symptoms_sum

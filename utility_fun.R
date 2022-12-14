@@ -1,4 +1,5 @@
 library(readr)
+library(weathermetrics)
 
 load_instrument <- function(file_name, file_path) {
   
@@ -95,7 +96,7 @@ download_normal_climate <- function(station, mainURL) {
       map(station_contents, function(x) x[[1]]) %>%
       map(., data.frame) %>%
       map(., function(x) x %>% 
-            # dplyr::select(-ends_with("_ATTRIBUTES"))) %>% # Those variables are not needed, and diffrent types --> cannot bind data
+            # change types of data --> otherwise cannot bind data
             dplyr::mutate(
               CDSD_ATTRIBUTES = as.integer(x$CDSD_ATTRIBUTES),
               HDSD_ATTRIBUTES = as.integer(x$HDSD_ATTRIBUTES))) %>%
@@ -104,14 +105,4 @@ download_normal_climate <- function(station, mainURL) {
   }
   
   return(dictionary_merge)
-}
-
-
-create_ever_var <- function(data, search_term, new_col_name) {
-  data <- data %>%
-    mutate(!!new_col_name := apply(data[, grepl(search_term, colnames(data))], 1, function(x) {any(x == 1)*1}))
-  data <- data %>%
-    mutate(!!new_col_name := ifelse((is.na(get(new_col_name)) &
-                                       (apply(data[, which(grepl(search_term, colnames(data)))], 1, function(x) {any(x == 0)}))), 0, get(new_col_name)))
-  return(data)
 }
