@@ -1,5 +1,5 @@
 ---
-title: "Main analysis"
+title: "Main and sensitivity analyses"
 author: "Kate Tran"
 date: "2022-11-22"
 output: html_document
@@ -105,7 +105,7 @@ mod_ksads_8 <- lmer(models(outcome = "scale(ksads_externalizing_exclude_attentat
                                         check.nobs.vs.nRE="ignore",
                                         optimizer = "bobyqa", optCtrl = list(maxfun = 2e5)))
 
-# Table 3
+# Table 2
 tab_model(mod_ksads_0, mod_ksads_1, mod_ksads_2, mod_ksads_3)
 # Table S3
 tab_model(mod_ksads_4, mod_ksads_5, mod_ksads_6, mod_ksads_7, mod_ksads_8)
