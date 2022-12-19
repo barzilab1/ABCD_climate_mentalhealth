@@ -70,7 +70,6 @@ dataset <- dataset %>%
     year_14d = year(interview_date_p14),
     year_14d = as.numeric(year_14d))
 
-# Clean data
 dataset <- dataset %>% 
   mutate(site_id_l_br = as.numeric(site_id_l_br),
          rel_family_id = as.factor(rel_family_id),
