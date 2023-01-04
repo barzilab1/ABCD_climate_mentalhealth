@@ -1,0 +1,54 @@
+---
+title: "Untitled"
+author: "Kate Tran"
+date: "2022-12-02"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(dplyr)
+library(tableone)
+
+# source("../utility_fun.R")
+```
+
+```{r}
+# Create wide data
+climate_data <- readRDS("../data/dataset_14d_4to10.rds")
+
+climate_data <- climate_data %>% 
+  select(matches("src|event|sex_|race|ethnicity|interview|edu|income|SA_|externalizing_exclude_attentation|reshist|site|dx90")) %>% 
+  mutate(eventname = factor(eventname, c("baseline_year_1_arm_1", "1_year_follow_up_y_arm_1", "2_year_follow_up_y_arm_1")),
+         age_years = interview_age/12)
+```
+
+```{r}
+# Create table 1
+table1_vars <- c("age_years", "sex_br", "race_white", "race_black", "race_aian", "race_nhpi",  "race_asian", "race_other", "race_mixed",
+                 "ethnicity_hisp", "household_income", "parents_avg_edu", 
+                 "reshist_addr1_d1a", "reshist_addr1_popdensity", "reshist_addr1_walkindex", 
+                 "dx90", "ksads_externalizing_exclude_attentation_symptoms_sum", "ksads_present_externalizing_exclude_attentation_symptoms_sum",
+                 "SA_y", "SA_current_y")
+table1_factors <- c("sex_br", "race_white", "race_black", "race_aian", "race_nhpi",  "race_asian", "race_other", "race_mixed",
+                 "ethnicity_hisp", "SA_y", "SA_current_y")
+
+write.csv(
+  print(
+    CreateTableOne(
+      data = climate_data,
+      vars = table1_vars,
+      factorVars = table1_factors,
+      strata = "eventname",
+      includeNA = T
+    ),
+    pDigits = 3,
+    catDigits = 2,
+    contDigits = 2
+  ),
+  "../outputs/table1.csv"
+)
+```
