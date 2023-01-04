@@ -77,7 +77,9 @@ dataset <- dataset %>%
 
 
 # merge with climate data - month, year, site
-dataset_14d <- left_join(dataset, climate %>% rename(month_14d = month, year_14d = year))
+dataset_14d <- left_join(dataset, climate %>% rename(month_14d = month, year_14d = year)) %>% 
+  # remove missing data of dx90
+  filter(!is.na(dx90))
 
 # filter from may to sep
 dataset_14d_5to9 <- dataset_14d %>% filter(month_14d >= 5 & month_14d <= 9)
