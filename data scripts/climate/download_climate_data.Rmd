@@ -30,19 +30,12 @@ stations <- c("USC00085667", "USW00053908", "USC00356749", "USC00046646", "USC00
 ```
 
 ```{r}
-# download normal average data
-# data_normal_avg <- download_normal_climate(station = stations, mainURL = "https://www.ncei.noaa.gov/data/normals-monthly/1991-2020/access/")
-
 # download monthly temperature data
 data_monthly <- download_normal_climate(station = stations, mainURL = "https://www.ncei.noaa.gov/data/global-summary-of-the-month/access/")
 ```
 
 ```{r}
-# write_csv(data_normal_avg, "../../data/data_normal_avg.csv")
 write_csv(data_monthly, "../../data/data_monthly.csv")
-
-# write_rds(data_normal_avg, "../../data/data_normal_avg.rds")
-# write_rds(data_monthly, "../../data/data_monthly.rds")
 ```
 
 
