@@ -30,8 +30,6 @@ climate_data <- readRDS("../data/dataset_14d_4to10.rds") %>%
 ```{r}
 # Figure S1
 # Number of participants across months
-
-my_labels <- c("Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct")
 ggplot(climate_data) + aes(x = month_14d) +
   geom_bar(fill = "royalblue4") +
   labs(x = "",
@@ -80,7 +78,6 @@ plot1 <- climate_plot %>% ggplot(aes(x = scale(dx90), y = scale(ksads_externaliz
         plot.subtitle = element_text(size = 23.5, hjust = 0.5, face = "bold"),
         strip.text = element_text(size = 20, face = "bold"),
         axis.ticks = element_line(size = 0.5))
-
 # ggsave(filename = "../plots/association_by_stations.png", width = 8, height = 6, dpi = 620)
 
 
@@ -160,9 +157,6 @@ climate_data %>%
 # Huntsman Mental Health Institute	UTAH	501 Chipeta Way Salt Lake City, UT 84108	USC00427655	SALT LAKE CITY E BENCH, UT US	16	-111.8230332	40.7591011
 # University of Wisconsin-Milwaukee	UWM	10437 W Innovation Dr Wauwatosa, WI 53226	USC00475474	MT MARY COLLEGE, WI US	18	-88.0446058	43.0440144
 # Washington University in St. Louis	WUSTL	4560 Clayton Avenue, St. Louis, MO 63110	USC00237452	ST LOUIS SCI CTR, MO US	20	-90.263963	38.632994
-
-
-
 ```
 
 ``` {r}
@@ -212,72 +206,14 @@ plot_usmap(data = statelists, regions = "state", values = "N") +
   
   annotate(geom = "text", x = 674046.2, y = -798478.2, label = 'bold("(10.8±6.7)")', color = "blue", size = 3, parse = TRUE) + #USC00237452
   annotate(geom = "text", x = 894046.2, y = -798478.2, label = 'bold("*")', color = "blue", size = 5, parse = TRUE) + #USC00237452
+  
   # Add the footnotes
   annotate(geom = "text", x = -991462, y = -2774255, label= 'bold("*")', color = "blue", size = 5.5, parse = TRUE) +
   annotate(geom = "text", x = 909462, y = -2759255, label = "'Mean ± Standard Deviation of extreme heat days ('>=90~'°F) per month'", color = "blue", size = 4.2, parse = TRUE, fontface = "bold") +
   geom_point(data = data.frame(x = -991462, y = -2519255), aes(x = x, y = y),  color = "red", size = 3.5, shape = 17) +
   annotate(geom = "text", x = 623538, y = -2509255, label= "ABCD sites with corresponding temperature data available", color = "blue", size = 4.2)
-  # annotate(geom = "text", x = 1223538, y = -2419255, label = " No", color = "blue", size = 4)
 
 ggsave("../plots/map_v2.tiff", dpi = 320, width = 8, height = 6)
-```
-
-```{r}
-plot_usmap(data = statelists, regions = "state", values = "N") +
-  scale_fill_continuous(low = "azure", high = "azure", limits = c(0,2)) + #high = "lightblue3", 
-  labs(title = "", #The ABCD research sites used in this study
-       caption = "",
-       fill = "Count") +
-  theme(panel.background = element_rect(color = "black", fill = "white"),
-        legend.position = "none",
-        plot.title = element_text(hjust = 0.5, face = "bold", size = 15)) +
-  geom_point(data = transformed_data, 
-             aes(x = x, y = y), 
-             color = "red",
-             size = 3.5,
-             shape = 17) +
-  annotate(geom = "text", x = 2272731, y = -1909255.3, label = 'bold("(16.2±9.9)")', color = "blue", size = 3, parse = TRUE) + #USC00085667
-  annotate(geom = "text", x = 2062731, y = -1909255.3, label = 'bold("*")', color = "blue", size = 5, parse = TRUE) + #USC00085667 # x+200k
-  
-  annotate(geom = "text", x = 261461.6, y = -1136424.8, label = 'bold("(12.9±9.7)")', color = "blue", size = 3, parse = TRUE) + #USW00053908
-  annotate(geom = "text", x = 51461.6, y = -1136424.8,label = 'bold("*")', color = "blue", size = 5, parse = TRUE) + #USW00053908
-  
-  annotate(geom = "text", x = -1688710, y = 154836.9, label = 'bold("(1.7±2.6)")', color = "blue", size = 3, parse = TRUE) + #USC00356749
-  annotate(geom = "text", x = -1898710, y = 154836.9, label = 'bold("*")', color = "blue", size = 5, parse = TRUE) + #USC00356749
-  
-  annotate(geom = "text", x = -1735656, y = -721391.9, label = 'bold("(2.1±2.4)")', color = "blue", size = 3, parse = TRUE) + #USC00046646
-  annotate(geom = "text", x = -1945656, y = -721391.9, label = 'bold("*")', color = "blue", size = 5, parse = TRUE) + #USC00046646
-  
-  annotate(geom = "text", x = -2080056, y = -1023855, label = 'bold("(1.5±2.0)")', color = "blue", size = 3, parse = TRUE) + #USC00049152
-  annotate(geom = "text", x = -2290056, y = -1023855, label = 'bold("*")', color = "blue", size = 5, parse = TRUE) + #USC00049152
-  
-  annotate(geom = "text", x = -448725.6, y = -692423.5, label = 'bold("(7.2±6.7)")', color = "blue", size = 3, parse = TRUE) + #USC00050848
-  annotate(geom = "text", x = -658725.6, y = -692423.5, label = 'bold("*")', color = "blue", size = 5, parse = TRUE) + #USC00050848
-  
-  annotate(geom = "text", x = 2362549, y = -352730.3, label = 'bold("(8.7±7.2)")', color = "blue", size = 3, parse = TRUE) + #USW00093784
-  annotate(geom = "text", x = 2152549, y = -352730.3, label = 'bold("*")', color = "blue", size = 5, parse = TRUE) + #USW00093784
-  
-  annotate(geom = "text", x = 1436727, y = -303404.1, label = 'bold("(2.2±2.9)")', color = "blue", size = 3, parse = TRUE) + #USC00200228
-  annotate(geom = "text", x = 1226727, y = -303404.1, label = 'bold("*")', color = "blue", size = 5, parse = TRUE) + #USC00200228
-  
-  annotate(geom = "text", x = -992155.1, y = -543883.8, label = 'bold("(6.3±8.4)")', color = "blue", size = 3, parse = TRUE) + #USC00421446
-  annotate(geom = "text", x = -1202155, y = -543883.8, label = 'bold("*")', color = "blue", size = 5, parse = TRUE) + #USC00421446
-  
-  annotate(geom = "text", x = 800130.3, y = -38193, label = 'bold("(2.0±1.8)")', color = "blue", size = 3, parse = TRUE) + #USC00475474
-  annotate(geom = "text", x = 590130.3, y = -38193, label = 'bold("*")', color = "blue", size = 5, parse = TRUE) + #USC00475474
-  
-  annotate(geom = "text", x = 674046.2, y = -798478.2, label = 'bold("(10.8±6.7)")', color = "blue", size = 3, parse = TRUE) + #USC00237452
-  annotate(geom = "text", x = 464046.2, y = -798478.2, label = 'bold("*")', color = "blue", size = 5, parse = TRUE) + #USC00237452
-  # Add the footnotes
-  annotate(geom = "text", x = -991462, y = -2774255, label= 'bold("*")', color = "blue", size = 5.5, parse = TRUE) +
-  annotate(geom = "text", x = 909462, y = -2759255, label = "'Mean ± Standard Deviation of extreme heat days ('>=90~'°F) per month'", color = "blue", size = 4.2, parse = TRUE, fontface = "bold") +
-  geom_point(data = data.frame(x = -991462, y = -2519255), aes(x = x, y = y),  color = "red", size = 3.5, shape = 17) +
-  annotate(geom = "text", x = 623538, y = -2509255, label= "ABCD sites with corresponding temperature data available", color = "blue", size = 4.2)
-  # annotate(geom = "text", x = 1223538, y = -2419255, label = " No", color = "blue", size = 4)
-
-ggsave("../plots/map_v3.tiff", dpi = 320, width = 8, height = 6)
-
-674046.2 - 210000
 ```
 
 
