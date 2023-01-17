@@ -12,8 +12,7 @@ knitr::opts_chunk$set(echo = TRUE)
 ```{r}
 library(dplyr)
 library(tableone)
-
-# source("../utility_fun.R")
+library(tableone)
 ```
 
 ```{r}
@@ -21,7 +20,7 @@ library(tableone)
 climate_data <- readRDS("../data/dataset_14d_4to10.rds")
 
 climate_data <- climate_data %>% 
-  select(matches("src|event|sex_|race|ethnicity|interview|edu|income|SA_|externalizing_exclude_attentation|reshist|site|dx90")) %>% 
+  select(matches("src|event|sex_|race|ethnicity|interview|edu|income|SA_|externalizing_exclude_attentation|reshist|site|dx90|station")) %>% 
   mutate(eventname = factor(eventname, c("baseline_year_1_arm_1", "1_year_follow_up_y_arm_1", "2_year_follow_up_y_arm_1")),
          age_years = interview_age/12)
 ```
@@ -52,3 +51,22 @@ write.csv(
   "../outputs/table1.csv"
 )
 ```
+
+```{r}
+# Table S3
+# Create table for each weather station with extreme heat day
+# Minimum
+climate_data %>% 
+  select(station, dx90) %>% 
+  group_by(station) %>% 
+  summarize(min = min(dx90),
+            max = max(dx90))
+
+# Minimum excluding dx90 = 0
+climate_data %>% 
+  select(station, dx90) %>% 
+  filter(dx90>0) %>% 
+  group_by(station) %>% 
+  summarize(min = min(dx90))
+```
+
