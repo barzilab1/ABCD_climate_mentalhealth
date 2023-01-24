@@ -19,10 +19,14 @@ source("../utility_fun.R")
 
 # Read the data
 ```{r}
-climate_data <- readRDS("../data/dataset_14d_4to10.rds")
-
+# 11 SITES
+# climate_data <- readRDS("../data/dataset_14d_4to10_11sites.rds")
 # In the sensitivity analysis
-climate_data_sens <- readRDS("../data/dataset_14d_5to9.rds")
+# climate_data_sens <- readRDS("../data/dataset_14d_5to9_11sites.rds")
+# climate_data_beforeCovid <- climate_data %>% filter(year_14d < 2020)
+# 21 SITES - USE THIS DATA INSTEAD AND RUN ALL MODELS BELOW
+climate_data <- readRDS("../data/dataset_14d_4to10_21sites.rds")
+climate_data_sens <- readRDS("../data/dataset_14d_5to9_21sites.rds")
 climate_data_beforeCovid <- climate_data %>% filter(year_14d < 2020)
 ```
 

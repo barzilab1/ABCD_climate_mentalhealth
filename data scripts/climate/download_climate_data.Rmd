@@ -11,31 +11,31 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ```{r}
 library(readr)
-library(readxl)
-library(tidyr)
-library(purrr)
-library(RCurl)
 library(dplyr)
-library(stringr)
-library(janitor)
-library(plyr)
 
 source("../../utility_fun.R")
 ```
 
+# PART 1: MAIN ANALYSIS - 11 SITES
 ```{r}
 # get stations (see the Methods on how to get those stations)
-stations <- c("USC00085667", "USW00053908", "USC00356749", "USC00046646", "USC00049152",
-              "USC00050848", "USW00093784", "USC00200228", "USC00421446", "USC00475474", "USC00237452")
-```
+stations_11sites <- read_csv("../../data/ABCD_21sites_multi_stations_012423.csv") %>% pull(station) %>% na.omit()
+# c("USC00085667", "USW00053908", "USC00356749", "USC00046646", "USC00049152",
+#   "USC00050848", "USW00093784", "USC00200228", "USC00421446", "USC00475474", "USC00237452")
 
-```{r}
 # download monthly temperature data
-data_monthly <- download_normal_climate(station = stations, mainURL = "https://www.ncei.noaa.gov/data/global-summary-of-the-month/access/")
+data_monthly_11sites <- download_normal_climate(station = stations_11sites, mainURL = "https://www.ncei.noaa.gov/data/global-summary-of-the-month/access/")
+```
+
+# PART 2: SENSITIVITY ANALYSIS - 21 SITES
+```{r}
+stations_21sites <- read_csv("../../data/ABCD_21sites_all_stations_closet_012423.csv") %>% pull(station) %>% na.omit()
+data_monthly_21sites <- download_normal_climate(station = stations_21sites, mainURL = "https://www.ncei.noaa.gov/data/global-summary-of-the-month/access/")
 ```
 
 ```{r}
-write_csv(data_monthly, "../../data/data_monthly.csv")
+write_csv(data_monthly_11sites, "../../data/data_monthly.csv")
+write_csv(data_monthly_21sites, "../../data/data_monthly_21sites.csv")
 ```
 
 

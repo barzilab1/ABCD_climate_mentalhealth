@@ -19,7 +19,8 @@ library(scales)
 ```
 
 ```{r}
-climate_data <- readRDS("../data/dataset_14d_4to10.rds") %>% 
+# climate_data <- readRDS("../data/dataset_14d_4to10_11sites.rds") %>% 
+climate_data <- readRDS("../data/dataset_14d_4to10_21sites.rds") %>% 
   mutate(eventname = recode(eventname,
                             baseline_year_1_arm_1 = "bl" ,
                             `1_year_follow_up_y_arm_1` = "1y",
@@ -49,23 +50,72 @@ ggplot(climate_data) + aes(x = month_14d) +
 ```{r}
 # Figure 1
 # The association between extreme heat and KSADS externalizing scores by stations
+# 11 sites
+# climate_plot <- climate_data %>% 
+#   mutate(station = recode(station,
+#                           USC00085667 = "Florida",
+#                           USW00053908	= "Oklahoma",
+#                           USC00356749	= "Oregon",
+#                           USC00046646	= "California (Menlo Park)",
+#                           USC00049152	= "California (Los Angeles)",
+#                           USC00050848	= "Colorado",
+#                           USW00093784	= "Maryland",
+#                           USC00200228	= "Michigan",
+#                           USC00421446	= "Utah",
+#                           USC00475474	= "Wisconsin",
+#                           USC00237452	= "Missouri"))
+
+# 21 sites
 climate_plot <- climate_data %>% 
   mutate(station = recode(station,
-                          USC00085667 = "Florida",
-                          USW00053908	= "Oklahoma",
-                          USC00356749	= "Oregon",
-                          USC00046646	= "California (Menlo Park)",
-                          USC00049152	= "California (Los Angeles)",
-                          USC00050848	= "Colorado",
-                          USW00093784	= "Maryland",
-                          USC00200228	= "Michigan",
-                          USC00421446	= "Utah",
-                          USC00475474	= "Wisconsin",
-                          USC00237452	= "Missouri"))
+                          USW00093134 = "California (Los Angeles) 1",
+                          USC00085667 = "Florida (Miami)",
+                          USC00421446 = "Utah",
+                          USW00053908 = "Oklahoma",
+                          USW00013782 = "South Carolina",
+                          USC00356749 = "Oregon",
+                          USC00046646 = "California (Menlo Park)",
+                          USW00093107 = "California (La Jolla)",
+                          USC00049152 = "California (Los Angeles) 2",
+                          USW00000160 = "Colorado", # change
+                          USW00012816 = "Florida (Gainesville)",
+                          USW00093784 = "Maryland",
+                          USC00200230 = "Michigan", # change
+                          USC00214884 = "Minnesota",
+                          USC00360861 = "Pennsylvania",
+                          USW00014768 = "New York",
+                          USW00014742 = "Vermont",
+                          USC00475474 = "Wisconsin",
+                          USW00013740 = "Virginia",
+                          USC00237452 = "Missouri",
+                          USW00014758 = "Connecticut"
+                          ))
+# USW00093134	4641 Sunset Blvd. Los Angeles, CA 90027
+# USC00085667	11200 SW 8th Street Miami, FL 33199
+# USC00421446	501 Chipeta Way Salt Lake City, UT 84108
+# USW00053908	6655 S Yale Ave, Tulsa, OK 74136
+# USW00013782	30 Bee Street Charleston, SC 29425
+# USC00356749	3181 SW Sam Jackson Park Rd, Portland, OR 97239
+# USC00046646	333 Ravenswood Ave. Menlo Park, CA 94025
+# USW00093107	9500 Gilman Drive La Jolla, CA 92093
+# USC00049152	760 Westwood Plaza Los Angeles, CA 90095
+# USW00000160	1777 Exposition Drive Boulder, CO 80301
+# USW00012816	1600 SW Archer Rd, Gainesville, FL 32610
+# USW00093784	670 W Baltimore St, Baltimore, MD 21201
+# USC00200230	4250 Plymouth Rd. Ann Arbor, MI 48109
+# USC00214884	75 East River Parkway Minneapolis, MN 55455
+# USC00360861	3811 O'Hara Street, Pittsburgh, PA 15213
+# USW00014768	430 Elmwood Ave Rochester, NY 14620
+# USW00014742	111 Colchester Ave. Burlington, VT 05401
+# USC00475474	10437 W Innovation Dr Wauwatosa, WI 53226
+# USW00013740	203 E Cary Street, Richmond, VA 23219
+# USC00237452	4560 Clayton Avenue, St. Louis, MO 63110
+# USW00014758	2 Hillhouse Ave New Haven, CT 06511
+
 plot1 <- climate_plot %>% ggplot(aes(x = scale(dx90), y = scale(ksads_externalizing_exclude_attentation_symptoms_sum))) +
   geom_point(color = "darkslategray4") +
   geom_smooth(method = "lm", se = TRUE, fill = "blue", color = "red") +
-  facet_wrap(~station, ncol = 3) +
+  facet_wrap(~station, ncol = 4) +
   labs(x = "",
        y = "Standardized lifetime KSADS externalizing scores \n(past/ current)",
        title = "Association between number of extreme heat days per month and\nlifetime externalizing scores\n",
@@ -78,7 +128,7 @@ plot1 <- climate_plot %>% ggplot(aes(x = scale(dx90), y = scale(ksads_externaliz
         plot.subtitle = element_text(size = 23.5, hjust = 0.5, face = "bold"),
         strip.text = element_text(size = 20, face = "bold"),
         axis.ticks = element_line(size = 0.5))
-# ggsave(filename = "../plots/association_by_stations.png", width = 8, height = 6, dpi = 620)
+ggsave(filename = "../plots/association_by_stations_21sites.png", width = 15, height = 12, dpi = 620)
 
 
 plot2 <- climate_plot %>% ggplot(aes(x = scale(dx90), y = scale(ksads_externalizing_exclude_attentation_symptoms_sum))) +
@@ -94,7 +144,7 @@ plot2 <- climate_plot %>% ggplot(aes(x = scale(dx90), y = scale(ksads_externaliz
         axis.title.y = element_text(size = 20, face = "bold"),
         plot.subtitle = element_text(size = 23.5, hjust = 0.5, face = "bold"),
         axis.ticks = element_line(size = 0.5))
-# ggsave(filename = "../plots/association_all_stations.png", width = 8, height = 6, dpi = 620)
+# ggsave(filename = "../plots/association_all_stations_21sites.png", width = 8, height = 6, dpi = 620)
 
 ggpubr::ggarrange(plot1, plot2, ncol = 1, heights = c(11, 7), widths = c(12, 7))
 # ggsave(filename = "../plots/merged.tiff", width = 11, height = 15, dpi = 620)

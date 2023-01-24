@@ -1,5 +1,11 @@
 library(readr)
 library(weathermetrics)
+library(purrr)
+library(RCurl)
+library(dplyr)
+library(stringr)
+library(janitor)
+library(plyr)
 
 load_instrument <- function(file_name, file_path) {
   
@@ -64,6 +70,7 @@ models <- function(outcome, predictor, variables, var_added) {
 }
 
 
+
 download_normal_climate <- function(station, mainURL) {
   
   urls <- paste0(mainURL, station, ".csv" )
@@ -83,26 +90,14 @@ download_normal_climate <- function(station, mainURL) {
   }
   names(station_contents) <- station
   
-  if(str_detect(mainURL, "normals")) {
-    dictionary_merge <-
-      map(station_contents, function(x) x[[1]]) %>%
-      map(., data.frame) %>%
-      map(., function(x) x %>% 
-            dplyr::select(-contains("_flag"))) %>% # not need those columns
-      bind_rows() %>% 
-      clean_names()
-  } else {
-    dictionary_merge <-
-      map(station_contents, function(x) x[[1]]) %>%
-      map(., data.frame) %>%
-      map(., function(x) x %>% 
-            # change types of data --> otherwise cannot bind data
-            dplyr::mutate(
-              CDSD_ATTRIBUTES = as.integer(x$CDSD_ATTRIBUTES),
-              HDSD_ATTRIBUTES = as.integer(x$HDSD_ATTRIBUTES))) %>%
-      bind_rows() %>% 
-      clean_names()
-  }
+  dictionary_merge <-
+    map(station_contents, function(x) x[[1]]) %>%
+    map(., data.frame) %>%
+    # remove unneeded columns
+    map(., function(x) {x %>% select(-contains(c("flag", "_ATTRIBUTES")))}) %>% 
+    bind_rows() %>% 
+    clean_names()
   
   return(dictionary_merge)
 }
+
