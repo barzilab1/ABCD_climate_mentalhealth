@@ -20,14 +20,12 @@ source("../utility_fun.R")
 # Read the data
 ```{r}
 # 11 SITES
-# climate_data <- readRDS("../data/dataset_14d_4to10_11sites.rds")
+climate_data <- readRDS("../data/dataset_14d_4to10_11sites.rds")
 # In the sensitivity analysis
-# climate_data_sens <- readRDS("../data/dataset_14d_5to9_11sites.rds")
-# climate_data_beforeCovid <- climate_data %>% filter(year_14d < 2020)
-# 21 SITES - USE THIS DATA INSTEAD AND RUN ALL MODELS BELOW
-climate_data <- readRDS("../data/dataset_14d_4to10_21sites.rds")
-climate_data_sens <- readRDS("../data/dataset_14d_5to9_21sites.rds")
+climate_data_sens <- readRDS("../data/dataset_14d_5to9_11sites.rds")
 climate_data_beforeCovid <- climate_data %>% filter(year_14d < 2020)
+# 21 SITES
+climate_data_21sites <- readRDS("../data/dataset_14d_4to10_21sites.rds")
 ```
 
 # Define variables/covariates
@@ -111,7 +109,7 @@ mod_beforeCovid_ksads_2 <- lmer(models(outcome = "scale(ksads_externalizing_excl
                                                     check.nobs.vs.nRE="ignore",
                                                     optimizer = "bobyqa", optCtrl = list(maxfun = 2e5)))
 
-# Table S4
+# Table S5
 tab_model(mod_beforeCovid_ksads_0, mod_beforeCovid_ksads_1, mod_beforeCovid_ksads_2, show.intercept = F)
 ```
 
@@ -139,7 +137,7 @@ mod_MaySep_ksads_2 <- lmer(models(outcome = "scale(ksads_externalizing_exclude_a
                                                optimizer = "bobyqa", optCtrl = list(maxfun = 2e5)))
 
 
-# Table S5
+# Table S6
 tab_model(mod_MaySep_ksads_0, mod_MaySep_ksads_1, mod_MaySep_ksads_2, show.intercept = F)
 ```
 
@@ -166,7 +164,7 @@ mod_ksads_current_2 <- lmer(models(outcome = "scale(ksads_present_externalizing_
                                                 check.nobs.vs.nRE="ignore",
                                                 optimizer = "bobyqa", optCtrl = list(maxfun = 2e5)))
 
-# Table S6
+# Table S7
 tab_model(mod_ksads_current_0, mod_ksads_current_1, mod_ksads_current_2, show.intercept = F)
 ```
 
@@ -181,10 +179,36 @@ mod_SA_current_1 <- glmer(models(outcome = "SA_current_y", predictor = "scale(dx
 mod_SA_current_2 <- glmer(models(outcome = "SA_current_y", predictor = "scale(dx90)", variables = var_headache_0, var_added = var_covariates_2),
                           data = climate_data, family = binomial, nAGQ = 0)
 
-# Table S7
+# Table S8
 tab_model(mod_SA_current_0, mod_SA_current_1, mod_SA_current_2, show.intercept = F)
 ```
 
+## Sensitivity analysis: data of 21 sites (Apr-Oct)
+```{r}
+mod_ksads_0 <- lmer(models(outcome = "scale(ksads_externalizing_exclude_attentation_symptoms_sum)", predictor = "scale(dx90)", 
+                           variables = var_headache_0, var_added = NULL), data = climate_data_21sites, 
+                    control=lmerControl(check.nobs.vs.nlev = "ignore",
+                                        check.nobs.vs.rankZ = "ignore",
+                                        check.nobs.vs.nRE="ignore",
+                                        optimizer = "bobyqa", optCtrl = list(maxfun = 2e5)))
+
+mod_ksads_1 <- lmer(models(outcome = "scale(ksads_externalizing_exclude_attentation_symptoms_sum)", predictor = "scale(dx90)", 
+                           variables = var_headache_0, var_added = var_covariates_1), data = climate_data_21sites, 
+                    control=lmerControl(check.nobs.vs.nlev = "ignore",
+                                        check.nobs.vs.rankZ = "ignore",
+                                        check.nobs.vs.nRE="ignore",
+                                        optimizer = "bobyqa", optCtrl = list(maxfun = 2e5)))
+
+mod_ksads_2 <- lmer(models(outcome = "scale(ksads_externalizing_exclude_attentation_symptoms_sum)", predictor = "scale(dx90)", 
+                           variables = var_headache_0, var_added = var_covariates_2), data = climate_data_21sites, 
+                    control=lmerControl(check.nobs.vs.nlev = "ignore",
+                                        check.nobs.vs.rankZ = "ignore",
+                                        check.nobs.vs.nRE="ignore",
+                                        optimizer = "bobyqa", optCtrl = list(maxfun = 2e5)))
+
+# Table S9
+tab_model(mod_ksads_0, mod_ksads_1, mod_ksads_2, show.intercept = F)
+```
 
 
 

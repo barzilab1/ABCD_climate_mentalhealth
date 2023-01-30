@@ -58,6 +58,7 @@ all_stations <- multi_stations %>%
 
 # find the lon & lat of each station
 data_all_stations <- download_normal_climate(station = all_stations, mainURL = "https://www.ncei.noaa.gov/data/global-summary-of-the-month/access/")
+# data_all_stations <- read.csv("data/data_all_stations_21_sites_012423.csv")
 # write.csv(data_all_stations, "data/data_all_stations_21_sites_012423.csv")
 
 
@@ -93,11 +94,3 @@ multi_stations_closet <- multi_stations %>%
 
 
 write.csv(multi_stations_closet, "data/ABCD_21sites_all_stations_closet_012423.csv")
-
-
-
-
-
-
-
-  

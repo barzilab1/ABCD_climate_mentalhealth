@@ -15,9 +15,10 @@
 
 #### How to run the code:
 
-1. update the [config.R](config.R) to reflect the location of the instruments above.
-2. In the data-scripts folder, run scripts in any order. These scripts go over the abcd instruments and create new variables and datasets that are placed in the “data” folder.
-3. Run the [merging.R](scripts/merging.R) script to create the dataset.
-4. Run the [descriptive_table.Rmd](scripts/descriptive_table.Rmd) to generate table 1 of the main paper.
-5. Run the [create_plots.Rmd](scripts/create_plots.Rmd) to create 2 figures for the paper.
-6. Run the [analysis.Rmd](scripts/analysis.Rmd) for mixed models.
+1. Update the [config.R](config.R) to reflect the location of the instruments above.
+2. Run the [extract_weather_station.R](scripts/extract_weather_station.R) to download the climate data.
+3. In the data-scripts folder, run scripts in any order. These scripts go over the abcd instruments and create new variables and datasets that are placed in the “data” folder.
+4. Run the [merging.R](scripts/merging.R) script to create the dataset.
+5. Run the [descriptive_table.Rmd](scripts/descriptive_table.Rmd) to generate table 1 of the main paper.
+6. Run the [create_plots.Rmd](scripts/create_plots.Rmd) to create 2 figures for the paper.
+7. Run the [analysis.Rmd](scripts/analysis.Rmd) for mixed models.
