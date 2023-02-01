@@ -16,7 +16,7 @@ site_addr <- file.path(climate_mh_path, "ABCD_11sites_multi_stations.xlsx") %>% 
 station_multi <- site_addr %>% filter(!is.na(station)) %>% pull(station)
 
 # Get longitude and latitude of stations
-data_station_multi <- download_normal_climate(station = station_multi, mainURL = "https://www.ncei.noaa.gov/data/global-summary-of-the-month/access/")
+data_station_multi <- download_normal_climate(station = station_multi, mainURL = normal_climate_data_path)
 station_coord <- data_station_multi %>% distinct(station, .keep_all = T) %>% select(station, latitude, longitude) %>% 
   setNames(c("station", "station_lat", "station_lon"))
 
@@ -36,7 +36,10 @@ site_station_coord_distance <- site_station_coord %>%
   group_by(site) %>%
   arrange(site, distance) %>% 
   filter(row_number() == 1)
-write.csv(site_station_coord, "data/ABCD_21sites_multi_stations_012423.csv")
+
+
+# write.csv(site_station_coord_distance, "data/ABCD_11sites_020123.csv")
+# write.csv(site_station_coord, "data/ABCD_21sites_multi_stations_020123.csv")
 
 # PART 2: Increase the bounding box of the website by d, select closet stations for all sites
 ## Calculate d (the longest distance among 11 closet station)
@@ -58,8 +61,8 @@ all_stations <- multi_stations %>%
 
 # find the lon & lat of each station
 data_all_stations <- download_normal_climate(station = all_stations, mainURL = "https://www.ncei.noaa.gov/data/global-summary-of-the-month/access/")
-# data_all_stations <- read.csv("data/data_all_stations_21_sites_012423.csv")
-# write.csv(data_all_stations, "data/data_all_stations_21_sites_012423.csv")
+# data_all_stations <- read.csv("data/data_all_stations_21_sites_020123.csv")
+# write.csv(data_all_stations, "data/data_all_stations_21_sites_020123.csv")
 
 
 coord_all_stations <- data_all_stations %>% 
@@ -83,14 +86,41 @@ for(i in 1:nrow(multi_stations)) {
                                  c(multi_stations$site_lon[i], multi_stations$site_lat[i]), fun = distHaversine)
 }
 
-# write.csv(multi_stations, "data/ABCD_21sites_all_stations_distances_012423.xlsx")
+# write.csv(multi_stations, "data/ABCD_21sites_all_stations_distances_020123.xlsx")
 
 # choose the min distance for each site # final closet station
 multi_stations_closet <- multi_stations %>% 
   select(site, station, distance) %>% 
   group_by(site) %>%
-  arrange(site, distance) %>% 
+  arrange(site, distance) %>%
   filter(row_number() == 1)
 
 
-write.csv(multi_stations_closet, "data/ABCD_21sites_all_stations_closet_012423.csv")
+# write.csv(multi_stations_closet, "data/ABCD_21sites_all_stations_closet_020123.csv")
+
+
+# Get the data of 11 closet stations
+## 11 closet stations
+closet_stations_11 <- site_station_coord_distance %>% distinct(station) %>% pull() %>% na.omit()
+## data of those 11 stations
+data_monthly_11sites <- data_all_stations %>% 
+  filter(station %in% closet_stations_11)
+
+# Get the data for 21 closet stations
+closet_stations_21 <- multi_stations_closet %>% distinct(station) %>% pull() %>% na.omit()
+## data of those 21 stations
+data_monthly_21sites <- data_all_stations %>% 
+  filter(station %in% closet_stations_21)
+
+write_csv(data_monthly_11sites, "data/data_monthly.csv")
+write_csv(data_monthly_21sites, "data/data_monthly_21sites.csv")
+
+
+
+
+
+
+
+
+
+

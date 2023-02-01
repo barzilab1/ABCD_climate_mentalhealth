@@ -44,21 +44,21 @@ var_covariates_2 <- c(var_covariates_1, "scale(reshist_addr1_d1a)", "scale(reshi
 # Analysis
 ## Main analysis: combined past/current externalizing symptoms (ksads_externalizing_exclude_attentation_symptoms_sum)
 ```{r}
-mod_ksads_0 <- lmer(models(outcome = "scale(ksads_externalizing_exclude_attentation_symptoms_sum)", predictor = "scale(dx90)", 
+mod_ksads_0 <- lmer(get_models(outcome = "scale(ksads_externalizing_exclude_attentation_symptoms_sum)", predictor = "scale(dx90)", 
                            variables = var_headache_0, var_added = NULL), data = climate_data, 
                     control=lmerControl(check.nobs.vs.nlev = "ignore",
                                         check.nobs.vs.rankZ = "ignore",
                                         check.nobs.vs.nRE="ignore",
                                         optimizer = "bobyqa", optCtrl = list(maxfun = 2e5)))
 
-mod_ksads_1 <- lmer(models(outcome = "scale(ksads_externalizing_exclude_attentation_symptoms_sum)", predictor = "scale(dx90)", 
+mod_ksads_1 <- lmer(get_models(outcome = "scale(ksads_externalizing_exclude_attentation_symptoms_sum)", predictor = "scale(dx90)", 
                            variables = var_headache_0, var_added = var_covariates_1), data = climate_data, 
                     control=lmerControl(check.nobs.vs.nlev = "ignore",
                                         check.nobs.vs.rankZ = "ignore",
                                         check.nobs.vs.nRE="ignore",
                                         optimizer = "bobyqa", optCtrl = list(maxfun = 2e5)))
 
-mod_ksads_2 <- lmer(models(outcome = "scale(ksads_externalizing_exclude_attentation_symptoms_sum)", predictor = "scale(dx90)", 
+mod_ksads_2 <- lmer(get_models(outcome = "scale(ksads_externalizing_exclude_attentation_symptoms_sum)", predictor = "scale(dx90)", 
                            variables = var_headache_0, var_added = var_covariates_2), data = climate_data, 
                     control=lmerControl(check.nobs.vs.nlev = "ignore",
                                         check.nobs.vs.rankZ = "ignore",
@@ -73,13 +73,13 @@ tab_model(mod_ksads_0, mod_ksads_1, mod_ksads_2, show.intercept = F)
 ## Main analysis: outcome lifetime suicide attempt (SA_y)
 ```{r}
 # Table 3
-mod_SA_0 <- glmer(models(outcome = "SA_y", predictor = "scale(dx90)", variables = var_headache_0, var_added = NULL), 
+mod_SA_0 <- glmer(get_models(outcome = "SA_y", predictor = "scale(dx90)", variables = var_headache_0, var_added = NULL), 
                   data = climate_data, family = binomial, nAGQ = 0)
 
-mod_SA_1 <- glmer(models(outcome = "SA_y", predictor = "scale(dx90)", variables = var_headache_0, var_added = var_covariates_1), 
+mod_SA_1 <- glmer(get_models(outcome = "SA_y", predictor = "scale(dx90)", variables = var_headache_0, var_added = var_covariates_1), 
                   data = climate_data, family = binomial, nAGQ = 0)
 
-mod_SA_2 <- glmer(models(outcome = "SA_y", predictor = "scale(dx90)", variables = var_headache_0, var_added = var_covariates_2), 
+mod_SA_2 <- glmer(get_models(outcome = "SA_y", predictor = "scale(dx90)", variables = var_headache_0, var_added = var_covariates_2), 
                   data = climate_data, family = binomial, nAGQ = 0)
 
 tab_model(mod_SA_0, mod_SA_1, mod_SA_2, show.intercept = F)
@@ -88,21 +88,21 @@ tab_model(mod_SA_0, mod_SA_1, mod_SA_2, show.intercept = F)
 
 ## Sensitivity analysis: before Covid
 ```{r}
-mod_beforeCovid_ksads_0 <- lmer(models(outcome = "scale(ksads_externalizing_exclude_attentation_symptoms_sum)", predictor = "scale(dx90)", 
+mod_beforeCovid_ksads_0 <- lmer(get_models(outcome = "scale(ksads_externalizing_exclude_attentation_symptoms_sum)", predictor = "scale(dx90)", 
                                        variables = var_headache_0, var_added = NULL), data = climate_data_beforeCovid, 
                                 control=lmerControl(check.nobs.vs.nlev = "ignore",
                                                     check.nobs.vs.rankZ = "ignore",
                                                     check.nobs.vs.nRE="ignore",
                                                     optimizer = "bobyqa", optCtrl = list(maxfun = 2e5)))
 
-mod_beforeCovid_ksads_1 <- lmer(models(outcome = "scale(ksads_externalizing_exclude_attentation_symptoms_sum)", predictor = "scale(dx90)", 
+mod_beforeCovid_ksads_1 <- lmer(get_models(outcome = "scale(ksads_externalizing_exclude_attentation_symptoms_sum)", predictor = "scale(dx90)", 
                                        variables = var_headache_0, var_added = var_covariates_1), data = climate_data_beforeCovid, 
                                 control=lmerControl(check.nobs.vs.nlev = "ignore",
                                                     check.nobs.vs.rankZ = "ignore",
                                                     check.nobs.vs.nRE="ignore",
                                                     optimizer = "bobyqa", optCtrl = list(maxfun = 2e5)))
 
-mod_beforeCovid_ksads_2 <- lmer(models(outcome = "scale(ksads_externalizing_exclude_attentation_symptoms_sum)", predictor = "scale(dx90)", 
+mod_beforeCovid_ksads_2 <- lmer(get_models(outcome = "scale(ksads_externalizing_exclude_attentation_symptoms_sum)", predictor = "scale(dx90)", 
                                        variables = var_headache_0, var_added = var_covariates_2), data = climate_data_beforeCovid, 
                                 control=lmerControl(check.nobs.vs.nlev = "ignore",
                                                     check.nobs.vs.rankZ = "ignore",
@@ -115,21 +115,21 @@ tab_model(mod_beforeCovid_ksads_0, mod_beforeCovid_ksads_1, mod_beforeCovid_ksad
 
 ## Sensitivity analysis: May to Sep data
 ```{r}
-mod_MaySep_ksads_0 <- lmer(models(outcome = "scale(ksads_externalizing_exclude_attentation_symptoms_sum)", predictor = "scale(dx90)", 
+mod_MaySep_ksads_0 <- lmer(get_models(outcome = "scale(ksads_externalizing_exclude_attentation_symptoms_sum)", predictor = "scale(dx90)", 
                                   variables = var_headache_0, var_added = NULL), data = climate_data_sens, 
                            control=lmerControl(check.nobs.vs.nlev = "ignore",
                                                check.nobs.vs.rankZ = "ignore",
                                                check.nobs.vs.nRE="ignore",
                                                optimizer = "bobyqa", optCtrl = list(maxfun = 2e5)))
 
-mod_MaySep_ksads_1 <- lmer(models(outcome = "scale(ksads_externalizing_exclude_attentation_symptoms_sum)", predictor = "scale(dx90)", 
+mod_MaySep_ksads_1 <- lmer(get_models(outcome = "scale(ksads_externalizing_exclude_attentation_symptoms_sum)", predictor = "scale(dx90)", 
                                   variables = var_headache_0, var_added = var_covariates_1), data = climate_data_sens, 
                            control=lmerControl(check.nobs.vs.nlev = "ignore",
                                                check.nobs.vs.rankZ = "ignore",
                                                check.nobs.vs.nRE="ignore",
                                                optimizer = "bobyqa", optCtrl = list(maxfun = 2e5)))
 
-mod_MaySep_ksads_2 <- lmer(models(outcome = "scale(ksads_externalizing_exclude_attentation_symptoms_sum)", predictor = "scale(dx90)", 
+mod_MaySep_ksads_2 <- lmer(get_models(outcome = "scale(ksads_externalizing_exclude_attentation_symptoms_sum)", predictor = "scale(dx90)", 
                                   variables = var_headache_0, var_added = var_covariates_2), data = climate_data_sens, 
                            control=lmerControl(check.nobs.vs.nlev = "ignore",
                                                check.nobs.vs.rankZ = "ignore",
@@ -143,21 +143,21 @@ tab_model(mod_MaySep_ksads_0, mod_MaySep_ksads_1, mod_MaySep_ksads_2, show.inter
 
 ## Sensitivity analysis: outcome Present Ksad externalizing symptoms
 ```{r}
-mod_ksads_current_0 <- lmer(models(outcome = "scale(ksads_present_externalizing_exclude_attentation_symptoms_sum)", predictor = "scale(dx90)", 
+mod_ksads_current_0 <- lmer(get_models(outcome = "scale(ksads_present_externalizing_exclude_attentation_symptoms_sum)", predictor = "scale(dx90)", 
                                    variables = var_headache_0, var_added = NULL), data = climate_data, 
                             control=lmerControl(check.nobs.vs.nlev = "ignore",
                                                 check.nobs.vs.rankZ = "ignore",
                                                 check.nobs.vs.nRE="ignore",
                                                 optimizer = "bobyqa", optCtrl = list(maxfun = 2e5)))
 
-mod_ksads_current_1 <- lmer(models(outcome = "scale(ksads_present_externalizing_exclude_attentation_symptoms_sum)", predictor = "scale(dx90)", 
+mod_ksads_current_1 <- lmer(get_models(outcome = "scale(ksads_present_externalizing_exclude_attentation_symptoms_sum)", predictor = "scale(dx90)", 
                                    variables = var_headache_0, var_added = var_covariates_1), data = climate_data, 
                             control=lmerControl(check.nobs.vs.nlev = "ignore",
                                                 check.nobs.vs.rankZ = "ignore",
                                                 check.nobs.vs.nRE="ignore",
                                                 optimizer = "bobyqa", optCtrl = list(maxfun = 2e5)))
 
-mod_ksads_current_2 <- lmer(models(outcome = "scale(ksads_present_externalizing_exclude_attentation_symptoms_sum)", predictor = "scale(dx90)", 
+mod_ksads_current_2 <- lmer(get_models(outcome = "scale(ksads_present_externalizing_exclude_attentation_symptoms_sum)", predictor = "scale(dx90)", 
                                    variables = var_headache_0, var_added = var_covariates_2), data = climate_data, 
                             control=lmerControl(check.nobs.vs.nlev = "ignore",
                                                 check.nobs.vs.rankZ = "ignore",
@@ -170,13 +170,13 @@ tab_model(mod_ksads_current_0, mod_ksads_current_1, mod_ksads_current_2, show.in
 
 ## Sensitivity analysis: outcome SA_current_y
 ```{r}
-mod_SA_current_0 <- glmer(models(outcome = "SA_current_y", predictor = "scale(dx90)", variables = var_headache_0, var_added = NULL), 
+mod_SA_current_0 <- glmer(get_models(outcome = "SA_current_y", predictor = "scale(dx90)", variables = var_headache_0, var_added = NULL), 
                           data = climate_data, family = binomial, nAGQ = 0)
 
-mod_SA_current_1 <- glmer(models(outcome = "SA_current_y", predictor = "scale(dx90)", variables = var_headache_0, var_added = var_covariates_1),
+mod_SA_current_1 <- glmer(get_models(outcome = "SA_current_y", predictor = "scale(dx90)", variables = var_headache_0, var_added = var_covariates_1),
                           data = climate_data, family = binomial, nAGQ = 0)
 
-mod_SA_current_2 <- glmer(models(outcome = "SA_current_y", predictor = "scale(dx90)", variables = var_headache_0, var_added = var_covariates_2),
+mod_SA_current_2 <- glmer(get_models(outcome = "SA_current_y", predictor = "scale(dx90)", variables = var_headache_0, var_added = var_covariates_2),
                           data = climate_data, family = binomial, nAGQ = 0)
 
 # Table S8
@@ -185,21 +185,21 @@ tab_model(mod_SA_current_0, mod_SA_current_1, mod_SA_current_2, show.intercept =
 
 ## Sensitivity analysis: data of 21 sites (Apr-Oct)
 ```{r}
-mod_ksads_0 <- lmer(models(outcome = "scale(ksads_externalizing_exclude_attentation_symptoms_sum)", predictor = "scale(dx90)", 
+mod_ksads_0 <- lmer(get_models(outcome = "scale(ksads_externalizing_exclude_attentation_symptoms_sum)", predictor = "scale(dx90)", 
                            variables = var_headache_0, var_added = NULL), data = climate_data_21sites, 
                     control=lmerControl(check.nobs.vs.nlev = "ignore",
                                         check.nobs.vs.rankZ = "ignore",
                                         check.nobs.vs.nRE="ignore",
                                         optimizer = "bobyqa", optCtrl = list(maxfun = 2e5)))
 
-mod_ksads_1 <- lmer(models(outcome = "scale(ksads_externalizing_exclude_attentation_symptoms_sum)", predictor = "scale(dx90)", 
+mod_ksads_1 <- lmer(get_models(outcome = "scale(ksads_externalizing_exclude_attentation_symptoms_sum)", predictor = "scale(dx90)", 
                            variables = var_headache_0, var_added = var_covariates_1), data = climate_data_21sites, 
                     control=lmerControl(check.nobs.vs.nlev = "ignore",
                                         check.nobs.vs.rankZ = "ignore",
                                         check.nobs.vs.nRE="ignore",
                                         optimizer = "bobyqa", optCtrl = list(maxfun = 2e5)))
 
-mod_ksads_2 <- lmer(models(outcome = "scale(ksads_externalizing_exclude_attentation_symptoms_sum)", predictor = "scale(dx90)", 
+mod_ksads_2 <- lmer(get_models(outcome = "scale(ksads_externalizing_exclude_attentation_symptoms_sum)", predictor = "scale(dx90)", 
                            variables = var_headache_0, var_added = var_covariates_2), data = climate_data_21sites, 
                     control=lmerControl(check.nobs.vs.nlev = "ignore",
                                         check.nobs.vs.rankZ = "ignore",

@@ -56,7 +56,7 @@ load_instrument <- function(file_name, file_path) {
 
 
 
-models <- function(outcome, predictor, variables, var_added) {
+get_models <- function(outcome, predictor, variables, var_added) {
   if (is.null(var_added)) {
     model <- as.formula(paste0(outcome, " ~", paste0(c(
       predictor, variables
@@ -66,38 +66,38 @@ models <- function(outcome, predictor, variables, var_added) {
       c(predictor, variables, var_added), collapse = " + "
     ), sep = ""))
   }
-  return(model)
+  return(jtools::get_formula(model))
 }
 
 
 
-download_normal_climate <- function(station, mainURL) {
+download_normal_climate <- function(stations, mainURL) {
   
-  urls <- paste0(mainURL, station, ".csv" )
+  urls <- paste0(mainURL, stations, ".csv" )
   
   
-  station_contents <- list()
+  stations_contents <- list()
   
   for (i in 1:length(urls)) {
-    list <-
+    station_data <-
       map(urls[i], ~ tryCatch(
         read.csv(text = getURL(urls[i])),
         error = function(e)
           NULL
-      )) %>% plyr::mutate(station = station[i])
-    station_contents[[length(station_contents) + 1]] <-
-      list
+      )) #%>% plyr::mutate(stations = stations[i])
+    # stations_contents[[length(stations_contents) + 1]] <- station_data
+    stations_contents[[stations[i]]] <- station_data
   }
-  names(station_contents) <- station
+  # names(stations_contents) <- stations
   
-  dictionary_merge <-
-    map(station_contents, function(x) x[[1]]) %>%
+  stations_merge <-
+    map(stations_contents, function(x) x[[1]]) %>%
     map(., data.frame) %>%
     # remove unneeded columns
     map(., function(x) {x %>% select(-contains(c("flag", "_ATTRIBUTES")))}) %>% 
     bind_rows() %>% 
     clean_names()
   
-  return(dictionary_merge)
+  return(stations_merge)
 }
 

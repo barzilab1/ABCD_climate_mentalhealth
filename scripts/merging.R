@@ -19,7 +19,7 @@ family_relationship <- read_csv("data/family_relationship.csv") %>%
   select(src_subject_id, rel_family_id)
 externalize_ksad_symptoms_p <- read_csv("data/externalize_ksad_symptoms_p.csv")
 site <- read_csv("data/site.csv")
-suicide_long <- read_csv("data/suicide_long.csv") %>% select(-sex)
+suicide_long <- read_csv("data/suicide_long.csv")
 climate_11sites <- read_csv("data/data_monthly.csv")
 climate_11sites <- climate_11sites[, c("station", "date", "dx90")]
 

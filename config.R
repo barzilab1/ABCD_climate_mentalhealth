@@ -22,3 +22,4 @@ p_factor_files_path = file.path(main_abcd_path, abcd_box_path, p_factor_box_path
 e_factor_files_path = file.path(main_abcd_path, abcd_box_path, e_factor_box_path)
 genetic_files_path = file.path(main_abcd_path, abcd_box_path, abcd_data_path, "genetics/")
 climate_mh_path = file.path(main_abcd_path, abcd_box_path, "Projects/climate_mental health/data")
+normal_climate_data_path = "https://www.ncei.noaa.gov/data/global-summary-of-the-month/access/"
