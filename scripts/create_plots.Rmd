@@ -170,26 +170,8 @@ transformed_data <- usmap_transform(site_data)
 # Get mean-SD of extreme heat at each site
 climate_data %>% 
   group_by(station) %>% 
-  summarize(Mean = round(mean(dx90, na.rm=TRUE), 1),
+  dplyr::summarise(Mean = round(mean(dx90, na.rm=TRUE), 1),
             SD = round(sd(dx90, na.rm=TRUE), 1))
-
-# latlon <- read.csv("../materials/ABCD_21sites_all_stations_closet_020123_withlatlon.csv")
-```
-
-```{r}
-# create the data for map labels (dx90 mean & sd)
-dx90_meansd <- read.csv("../outputs/tableS3_020223.csv")
-dx90_meansd %>% 
-  mutate(mean = round(mean, 1),
-         sd = round(sd, 1)) %>% 
-  mutate(mean_sd = paste0(mean, "±", sd)) %>% 
-  
-  
-  filter(station == "USW00093134") %>% 
-  pull(mean_sd)
-
-dx90_meansd$station[!dx90_meansd$station %in% c("USC00085667", "USW00053908", "USC00356749", "USC00046646", "USC00049152", "USW00093784", "USC00421446", "USC00475474", "USC00237452")] #"USC00200230" "USC00214884" "USC00360861" "USW00000160" "USW00012816" "USW00013740" "USW00013782" "USW00014742" "USW00014758" "USW00014768" "USW00093107"
-# [12] "USW00093134"
 ```
 
 ``` {r}
