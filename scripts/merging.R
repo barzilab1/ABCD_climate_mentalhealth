@@ -143,7 +143,7 @@ dataset_14d_21sites <- left_join(dataset, climate_21sites %>% dplyr::rename(mont
   filter(!is.na(dx90))
 
 # filter from may to sep
-dataset_14d_5to9_11sites <- dataset_14d_11sites %>% filter(month_14d >= 5 & month_14d <= 9)
+# dataset_14d_5to9_11sites <- dataset_14d_11sites %>% filter(month_14d >= 5 & month_14d <= 9)
 dataset_14d_5to9_21sites <- dataset_14d_21sites %>% filter(month_14d >= 5 & month_14d <= 9)
 
 # filter from apr to oct
@@ -153,7 +153,7 @@ dataset_14d_4to10_21sites <- dataset_14d_21sites %>% filter(month_14d >= 4 & mon
 
 # saveRDS(dataset_14d_11sites, file = "data/dataset_14d_11sites.rds")
 # saveRDS(dataset_14d_21sites, file = "data/dataset_14d_21sites.rds")
-saveRDS(dataset_14d_5to9_11sites, file = "data/dataset_14d_5to9_11sites.rds")
+# saveRDS(dataset_14d_5to9_11sites, file = "data/dataset_14d_5to9_11sites.rds")
 saveRDS(dataset_14d_5to9_21sites, file = "data/dataset_14d_5to9_21sites.rds")
 saveRDS(dataset_14d_4to10_11sites, file = "data/dataset_14d_4to10_11sites.rds")
 saveRDS(dataset_14d_4to10_21sites, file = "data/dataset_14d_4to10_21sites.rds")

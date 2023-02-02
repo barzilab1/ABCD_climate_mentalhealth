@@ -1,5 +1,5 @@
 ---
-title: "Untitled"
+title: "descriptive table"
 author: "Kate Tran"
 date: "2022-12-02"
 output: html_document
@@ -17,7 +17,7 @@ library(tableone)
 
 ```{r}
 # Create wide data
-climate_data <- readRDS("../data/dataset_14d_4to10.rds")
+climate_data <- readRDS("../data/dataset_14d_4to10_21sites.rds")
 
 climate_data <- climate_data %>% 
   select(matches("src|event|sex_|race|ethnicity|interview|edu|income|SA_|externalizing_exclude_attentation|reshist|site|dx90|station")) %>% 
@@ -48,7 +48,7 @@ write.csv(
     catDigits = 2,
     contDigits = 2
   ),
-  "../outputs/table1.csv"
+  "../outputs/table1_020223.csv"
 )
 ```
 
@@ -59,14 +59,16 @@ write.csv(
 climate_data %>% 
   select(station, dx90) %>% 
   group_by(station) %>% 
-  summarize(min = min(dx90),
-            max = max(dx90))
-
+  dplyr::summarise(min = min(dx90),
+            max = max(dx90),
+            mean = round(mean(dx90), 2),
+            sd = round(sd(dx90), 2)) %>% left_join(
 # Minimum excluding dx90 = 0
 climate_data %>% 
   select(station, dx90) %>% 
   filter(dx90>0) %>% 
   group_by(station) %>% 
-  summarize(min = min(dx90))
+  dplyr::summarise(min_exclude0 = min(dx90))) %>% 
+  write.csv("../outputs/tableS3_020223.csv")
 ```
 

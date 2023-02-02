@@ -19,7 +19,6 @@ library(scales)
 ```
 
 ```{r}
-# climate_data <- readRDS("../data/dataset_14d_4to10_11sites.rds") %>% 
 climate_data <- readRDS("../data/dataset_14d_4to10_21sites.rds") %>% 
   mutate(eventname = recode(eventname,
                             baseline_year_1_arm_1 = "bl" ,
@@ -44,27 +43,12 @@ ggplot(climate_data) + aes(x = month_14d) +
         axis.title.y = element_text(size = 14)
   )
 
-# ggsave("../plots/participants_across_time_noyear.tiff", dpi = 400, width = 6, height = 4)
+# ggsave("../plots/participants_across_time_noyear_020223.tiff", dpi = 400, width = 6, height = 4)
 ```
 
 ```{r}
 # Figure 1
 # The association between extreme heat and KSADS externalizing scores by stations
-# 11 sites
-# climate_plot <- climate_data %>% 
-#   mutate(station = recode(station,
-#                           USC00085667 = "Florida",
-#                           USW00053908	= "Oklahoma",
-#                           USC00356749	= "Oregon",
-#                           USC00046646	= "California (Menlo Park)",
-#                           USC00049152	= "California (Los Angeles)",
-#                           USC00050848	= "Colorado",
-#                           USW00093784	= "Maryland",
-#                           USC00200228	= "Michigan",
-#                           USC00421446	= "Utah",
-#                           USC00475474	= "Wisconsin",
-#                           USC00237452	= "Missouri"))
-
 # 21 sites
 climate_plot <- climate_data %>% 
   mutate(station = recode(station,
@@ -77,10 +61,10 @@ climate_plot <- climate_data %>%
                           USC00046646 = "California (Menlo Park)",
                           USW00093107 = "California (La Jolla)",
                           USC00049152 = "California (Los Angeles) 2",
-                          USW00000160 = "Colorado", # change
+                          USW00000160 = "Colorado",
                           USW00012816 = "Florida (Gainesville)",
                           USW00093784 = "Maryland",
-                          USC00200230 = "Michigan", # change
+                          USC00200230 = "Michigan",
                           USC00214884 = "Minnesota",
                           USC00360861 = "Pennsylvania",
                           USW00014768 = "New York",
@@ -115,20 +99,21 @@ climate_plot <- climate_data %>%
 plot1 <- climate_plot %>% ggplot(aes(x = scale(dx90), y = scale(ksads_externalizing_exclude_attentation_symptoms_sum))) +
   geom_point(color = "darkslategray4") +
   geom_smooth(method = "lm", se = TRUE, fill = "blue", color = "red") +
-  facet_wrap(~station, ncol = 4) +
+  facet_wrap(~station, ncol = 5) +
   labs(x = "",
-       y = "Standardized lifetime KSADS externalizing scores \n(past/ current)",
-       title = "Association between number of extreme heat days per month and\nlifetime externalizing scores\n",
+       y = "Standardized lifetime (past/ current) KSADS externalizing scores",
+       # y = "",
+       # title = "Association between number of extreme heat days per month and\nlifetime externalizing scores\n",
        subtitle = "Individual ABCD study sites") +
   theme_bw() +
-  theme(axis.text.x = element_text(size = 15),
-        axis.text.y = element_text(size = 18, face = "bold"),
-        axis.title.y = element_text(size = 20, face = "bold"),
+  theme(axis.text.x = element_text(size = 23, face = "bold"),
+        axis.text.y = element_text(size = 23, face = "bold"),
+        axis.title.y = element_text(size = 22, face = "bold"),
         plot.title = element_text(size = 23.5, hjust = 0.5, colour = "black", face = "bold"),
         plot.subtitle = element_text(size = 23.5, hjust = 0.5, face = "bold"),
-        strip.text = element_text(size = 20, face = "bold"),
+        strip.text = element_text(size = 18, face = "bold"),
         axis.ticks = element_line(size = 0.5))
-ggsave(filename = "../plots/association_by_stations_21sites.png", width = 15, height = 12, dpi = 620)
+# ggsave(filename = "../plots/association_by_stations_21sites_020223.png", width = 18, height = 11, dpi = 620)
 
 
 plot2 <- climate_plot %>% ggplot(aes(x = scale(dx90), y = scale(ksads_externalizing_exclude_attentation_symptoms_sum))) +
@@ -144,10 +129,10 @@ plot2 <- climate_plot %>% ggplot(aes(x = scale(dx90), y = scale(ksads_externaliz
         axis.title.y = element_text(size = 20, face = "bold"),
         plot.subtitle = element_text(size = 23.5, hjust = 0.5, face = "bold"),
         axis.ticks = element_line(size = 0.5))
-# ggsave(filename = "../plots/association_all_stations_21sites.png", width = 8, height = 6, dpi = 620)
+# ggsave(filename = "../plots/association_all_stations_21sites_020223.png", width = 8, height = 6, dpi = 620)
 
 ggpubr::ggarrange(plot1, plot2, ncol = 1, heights = c(11, 7), widths = c(12, 7))
-# ggsave(filename = "../plots/merged.tiff", width = 11, height = 15, dpi = 620)
+ggsave(filename = "../plots/merged_020223.tiff", width = 18, height = 17, dpi = 320)
 ```
 
 
@@ -156,11 +141,11 @@ ggpubr::ggarrange(plot1, plot2, ncol = 1, heights = c(11, 7), widths = c(12, 7))
 # Map of stations
 statelists <- data.frame(
   stringsAsFactors = FALSE,
-             state = c("Florida", "Oklahoma", "California", "Oregon", "Colorado", 
-                       "Maryland", "Michigan", "Utah", "Wisconsin", "Missouri"),
-         stateabbr = c("FL", "OK", "CA", "OR", "CO", "MD", "MI", "UT", "WI", "MO"),
-                 N = rep(1L, 10),
-              fips = c("12", "40", "06", "41", "08", "24", "26", "49", "55", "29")
+             state = c("California", "Colorado", "Connecticut", "Florida", "Maryland", "Michigan", "Minnesota", "Missouri", "New York",
+                       "Oklahoma", "Oregon", "Pennsylvania", "South Carolina", "Utah", "Vermont", "Virginia", "Wisconsin"),
+         stateabbr = c("CA", "CO", "CT", "FL", "MD", "MI", "MN", "MO", "NY", "OK", "OR", "PA", "SC", "UT", "VT", "VA", "WI"),
+                 N = rep(1L, 17),
+              fips = c("06", "08", "09", "12", "24", "26", "27", "29", "36", "40", "41", "42", "45", "49", "50", "51", "55")
   )
 
 # Get centroids
@@ -170,18 +155,15 @@ statelists <- statelists %>%
   bind_rows(centroid_labels %>% select(state = full, stateabbr = abbr, fips) %>% 
   mutate(N = 0) %>% 
   filter(
-    !state %in% c("Florida", "Oklahoma", "California", "Oregon", "Colorado", 
-                       "Maryland", "Michigan", "Utah", "Wisconsin", "Missouri")
+    !state %in% statelists$state
   ))
 
-# station data
-# station_data <- data.frame(lon = c(-80.38360, -95.99016, -122.68940, -122.14020, -118.44270, -105.26670, -76.61110, -83.69330, -111.83209, -88.02953, -90.27077),
-#                         lat = c(25.75530, 36.04243, 45.51810, 37.44360, 34.06970, 39.99190, 39.28140, 42.24160, 40.81496, 43.07211, 38.63079))
-# 
-# transformed_station_data <- usmap_transform(station_data)
-
-site_data <- data.frame(lon = c(-80.37628328, -95.922042, -122.6866858, -122.174686, -118.4442777, -105.2470868, -76.62623195, -83.67669471, -111.8230332, -88.0446058, -90.263963),
-                        lat = c(25.7553898, 36.066445, 45.49984645, 37.4566052, 34.065767, 40.01643779, 39.2897359, 42.30939163, 40.7591011, 43.0440144, 38.632994))
+site_data <- data.frame(lon = c(-118.29055,  -80.3762, -111.82303,  -95.92204,  -79.94864, -122.68669, -122.17469, -117.23927, 
+                                -118.44428, -105.24709,  -82.36370,  -76.62623,  -83.67669,  -93.23764,  -79.95985,
+                                -77.62694,  -73.19292,  -88.04461,  -77.44298,  -90.26396,  -72.92465),
+                        lat = c(34.09820, 25.75539, 40.75910, 36.06645, 32.78691, 45.49985, 37.45661, 32.87581, 34.06577, 40.01644, 
+                                29.63123, 39.28974, 42.30939, 44.97689, 40.44355, 43.12416, 44.47849, 43.04401,
+                                37.54053, 38.63299, 41.31190))
 
 transformed_data <- usmap_transform(site_data)
 
@@ -191,71 +173,100 @@ climate_data %>%
   summarize(Mean = round(mean(dx90, na.rm=TRUE), 1),
             SD = round(sd(dx90, na.rm=TRUE), 1))
 
+# latlon <- read.csv("../materials/ABCD_21sites_all_stations_closet_020123_withlatlon.csv")
 ```
 
 ```{r}
-# Longitude and latitude of ABCD sites
-# ABCD name		ABCD address	Weather Station ID	Weather Station name 	site_id_l_br	longitude	latitude
-# Florida International University (FIU)	FIU	11200 SW 8th Street Miami, FL 33199	USC00085667	MIAMI NWSFO, FL US	03	-80.37628328	25.7553898
-# Laureate Institute for Brain Research	LIBR	6655 S Yale Ave, Tulsa, OK 74136-3326	USW00053908	TULSA R L JONES JR AP, OK US	04	-95.922042	36.066445
-# Oregon Health & Science University (OHSU)	OHSU	3181 SW Sam Jackson Park Rd, Portland, OR 97239	USC00356749	PORTLAND KGW-TV, OR US	06	-122.6866858	45.49984645
-# SRI International	SRI	333 Ravenswood Ave. Menlo Park, CA 94025	USC00046646	PALO ALTO, CA US 	08	-122.174686	37.4566052
-# University of California, Los Angeles (UCLA)	UCLA	760 Westwood Plaza Los Angeles, CA 90095-1759	USC00049152	 U C L A, CA US	09	-118.4442777	34.065767
-# University of Colorado Boulder (CU Boulder)	CUB	1777 Exposition Drive Boulder, CO 80301	USC00050848	BOULDER, CO US	02	-105.2470868	40.01643779
-# University of Maryland	UMB	670 W Baltimore St, Baltimore, MD 21201	USW00093784	MD SCI CTR BALTIMORE, MD US	12	-76.62623195	39.2897359
-# University of Michigan	UMICH	4250 Plymouth Rd. Ann Arbor, MI 48109	USC00200228	ANN ARBOR SE, MI US	13	-83.67669471	42.30939163
-# Huntsman Mental Health Institute	UTAH	501 Chipeta Way Salt Lake City, UT 84108	USC00427655	SALT LAKE CITY E BENCH, UT US	16	-111.8230332	40.7591011
-# University of Wisconsin-Milwaukee	UWM	10437 W Innovation Dr Wauwatosa, WI 53226	USC00475474	MT MARY COLLEGE, WI US	18	-88.0446058	43.0440144
-# Washington University in St. Louis	WUSTL	4560 Clayton Avenue, St. Louis, MO 63110	USC00237452	ST LOUIS SCI CTR, MO US	20	-90.263963	38.632994
+# create the data for map labels (dx90 mean & sd)
+dx90_meansd <- read.csv("../outputs/tableS3_020223.csv")
+dx90_meansd %>% 
+  mutate(mean = round(mean, 1),
+         sd = round(sd, 1)) %>% 
+  mutate(mean_sd = paste0(mean, "±", sd)) %>% 
+  
+  
+  filter(station == "USW00093134") %>% 
+  pull(mean_sd)
+
+dx90_meansd$station[!dx90_meansd$station %in% c("USC00085667", "USW00053908", "USC00356749", "USC00046646", "USC00049152", "USW00093784", "USC00421446", "USC00475474", "USC00237452")] #"USC00200230" "USC00214884" "USC00360861" "USW00000160" "USW00012816" "USW00013740" "USW00013782" "USW00014742" "USW00014758" "USW00014768" "USW00093107"
+# [12] "USW00093134"
 ```
 
 ``` {r}
-# create plot
+# create plot 
 plot_usmap(data = statelists, regions = "state", values = "N") +
   scale_fill_continuous(low = "azure", high = "azure", limits = c(0,2)) + #high = "lightblue3", 
-  labs(title = "", #The ABCD research sites used in this study
-       caption = "",
-       fill = "Count") +
+  labs(fill = "Count") +
   theme(panel.background = element_rect(color = "black", fill = "white"),
         legend.position = "none",
         plot.title = element_text(hjust = 0.5, face = "bold", size = 15)) +
   geom_point(data = transformed_data, 
              aes(x = x, y = y), 
              color = "red",
-             size = 3.5,
+             size = 3,
              shape = 17) +
-  annotate(geom = "text", x = 2272731, y = -1909255.3, label = 'bold("(16.2±9.9)")', color = "blue", size = 3, parse = TRUE) + #USC00085667
-  annotate(geom = "text", x = 2492731, y = -1909255.3, label = 'bold("*")', color = "blue", size = 5, parse = TRUE) + #USC00085667 # x+200k
+  annotate(geom = "text", x = 2222731, y = -1909255.3, label = 'bold("(16.2±9.9)")', color = "blue", size = 3, parse = TRUE) + #USC00085667
+  annotate(geom = "text", x = 2442731, y = -1909255.3, label = 'bold("*")', color = "blue", size = 5, parse = TRUE) + #USC00085667 #
   
-  annotate(geom = "text", x = 261461.6, y = -1136424.8, label = 'bold("(12.9±9.7)")', color = "blue", size = 3, parse = TRUE) + #USW00053908
-  annotate(geom = "text", x = 481461.6, y = -1136424.8,label = 'bold("*")', color = "blue", size = 5, parse = TRUE) + #USW00053908
+  annotate(geom = "text", x = 261461.6, y = -1080424.8, label = 'bold("(12.9±9.7)")', color = "blue", size = 3, parse = TRUE) + #USW00053908
+  annotate(geom = "text", x = 481461.6, y = -1080424.8,label = 'bold("*")', color = "blue", size = 5, parse = TRUE) + #USW00053908
   
-  annotate(geom = "text", x = -1688710, y = 154836.9, label = 'bold("(1.7±2.6)")', color = "blue", size = 3, parse = TRUE) + #USC00356749
-  annotate(geom = "text", x = -1488710, y = 154836.9, label = 'bold("*")', color = "blue", size = 5, parse = TRUE) + #USC00356749
+  annotate(geom = "text", x = -1688710, y = 186836.9, label = 'bold("(1.7±2.6)")', color = "blue", size = 3, parse = TRUE) + #USC00356749
+  annotate(geom = "text", x = -1488710, y = 186836.9, label = 'bold("*")', color = "blue", size = 5, parse = TRUE) + #USC00356749
   
   annotate(geom = "text", x = -1770656, y = -721391.9, label = 'bold("(2.1±2.4)")', color = "blue", size = 3, parse = TRUE) + #USC00046646
   annotate(geom = "text", x = -1575656, y = -721391.9, label = 'bold("*")', color = "blue", size = 5, parse = TRUE) + #USC00046646
   
-  annotate(geom = "text", x = -2080056, y = -1023855, label = 'bold("(1.5±2.0)")', color = "blue", size = 3, parse = TRUE) + #USC00049152
-  annotate(geom = "text", x = -1895056, y = -1023855, label = 'bold("*")', color = "blue", size = 5, parse = TRUE) + #USC00049152
+  annotate(geom = "text", x = -1950056, y = -1073855, label = 'bold("(1.5±2.0)")', color = "blue", size = 3, parse = TRUE) + #USC00049152
+  annotate(geom = "text", x = -1765056, y = -1073855, label = 'bold("*")', color = "blue", size = 5, parse = TRUE) + #USC00049152
   
-  annotate(geom = "text", x = -448725.6, y = -692423.5, label = 'bold("(7.2±6.7)")', color = "blue", size = 3, parse = TRUE) + #USC00050848
-  annotate(geom = "text", x = -253725.6, y = -692423.5, label = 'bold("*")', color = "blue", size = 5, parse = TRUE) + #USC00050848
+  annotate(geom = "text", x = 2312549, y = -352730.3, label = 'bold("(8.7±7.2)")', color = "blue", size = 3, parse = TRUE) + #USW00093784
+  annotate(geom = "text", x = 2512549, y = -352730.3, label = 'bold("*")', color = "blue", size = 5, parse = TRUE) + #USW00093784
   
-  annotate(geom = "text", x = 2362549, y = -352730.3, label = 'bold("(8.7±7.2)")', color = "blue", size = 3, parse = TRUE) + #USW00093784
-  annotate(geom = "text", x = 2562549, y = -352730.3, label = 'bold("*")', color = "blue", size = 5, parse = TRUE) + #USW00093784
+  annotate(geom = "text", x = -992155.1, y = -500883.8, label = 'bold("(6.2±8.4)")', color = "blue", size = 3, parse = TRUE) + #USC00421446
+  annotate(geom = "text", x = -802155.1, y = -500883.8, label = 'bold("*")', color = "blue", size = 5, parse = TRUE) + #USC00421446
   
-  annotate(geom = "text", x = 1436727, y = -303404.1, label = 'bold("(2.2±2.9)")', color = "blue", size = 3, parse = TRUE) + #USC00200228
-  annotate(geom = "text", x = 1656727, y = -303404.1, label = 'bold("*")', color = "blue", size = 5, parse = TRUE) + #USC00200228
+  annotate(geom = "text", x = 800130.3, y = -278193, label = 'bold("(2.0±1.8)")', color = "blue", size = 3, parse = TRUE) + #USC00475474
+  annotate(geom = "text", x = 990130, y = -278193, label = 'bold("*")', color = "blue", size = 5, parse = TRUE) + #USC00475474
   
-  annotate(geom = "text", x = -992155.1, y = -543883.8, label = 'bold("(6.3±8.4)")', color = "blue", size = 3, parse = TRUE) + #USC00421446
-  annotate(geom = "text", x = -802155.1, y = -543883.8, label = 'bold("*")', color = "blue", size = 5, parse = TRUE) + #USC00421446
+  annotate(geom = "text", x = 674046.2, y = -780478.2, label = 'bold("(10.8±6.7)")', color = "blue", size = 3, parse = TRUE) + #USC00237452
+  annotate(geom = "text", x = 894046.2, y = -780478.2, label = 'bold("*")', color = "blue", size = 5, parse = TRUE) + #USC00237452
   
-  annotate(geom = "text", x = 800130.3, y = -38193, label = 'bold("(2.0±1.8)")', color = "blue", size = 3, parse = TRUE) + #USC00475474
-  annotate(geom = "text", x = 1020130, y = -38193, label = 'bold("*")', color = "blue", size = 5, parse = TRUE) + #USC00475474
+  annotate(geom = "text", x = 1336727, y = -303404.1, label = 'bold("(2.4±3.1)")', color = "blue", size = 3, parse = TRUE) + #USC00200230
+  annotate(geom = "text", x = 1526727, y = -303404.1, label = 'bold("*")', color = "blue", size = 5, parse = TRUE) + #USC00200230
   
-  annotate(geom = "text", x = 674046.2, y = -798478.2, label = 'bold("(10.8±6.7)")', color = "blue", size = 3, parse = TRUE) + #USC00237452
-  annotate(geom = "text", x = 894046.2, y = -798478.2, label = 'bold("*")', color = "blue", size = 5, parse = TRUE) + #USC00237452
+  annotate(geom = "text", x = 420130.3, y = -90807, label = 'bold("(1.4±2.0)")', color = "blue", size = 3, parse = TRUE) + #USC00214884
+  annotate(geom = "text", x = 620130.3, y = -90807, label = 'bold("*")', color = "blue", size = 5, parse = TRUE) + #USC00214884
+  
+  annotate(geom = "text", x = 1736727, y = -203404.1, label = 'bold("(2.1±2.9)")', color = "blue", size = 3, parse = TRUE) + #USC00360861
+  annotate(geom = "text", x = 1926727, y = -203404.1, label = 'bold("*")', color = "blue", size = 5, parse = TRUE) + #USC00360861
+  
+  annotate(geom = "text", x = -492155.1, y = -633883.8, label = 'bold("(6.7±6.3)")', color = "blue", size = 3, parse = TRUE) + #USW00000160
+  annotate(geom = "text", x = -302155.1, y = -633883.8, label = 'bold("*")', color = "blue", size = 5, parse = TRUE) + #USW00000160
+
+  annotate(geom = "text", x = 2052731, y = -1529255.3, label = 'bold("(17.3±8.9)")', color = "blue", size = 3, parse = TRUE) + #USW00012816
+  annotate(geom = "text", x = 2272731, y = -1529255.3, label = 'bold("*")', color = "blue", size = 5, parse = TRUE) + #USW00012816
+
+  annotate(geom = "text", x = 2302549, y = -572730.3, label = 'bold("(9.3±7.6)")', color = "blue", size = 3, parse = TRUE) + #USW00013740
+  annotate(geom = "text", x = 2502549, y = -572730.3, label = 'bold("*")', color = "blue", size = 5, parse = TRUE) + #USW00013740
+
+  annotate(geom = "text", x = 2082731, y = -1129255.3, label = 'bold("(3.5±3.1)")', color = "blue", size = 3, parse = TRUE) + #USW00013782
+  annotate(geom = "text", x = 2282731, y = -1129255.3, label = 'bold("*")', color = "blue", size = 5, parse = TRUE) + #USW00013782
+
+  annotate(geom = "text", x = 1836727, y = 366595.9, label = 'bold("(1.8±2.8)")', color = "blue", size = 3, parse = TRUE) + #USW00014742
+  annotate(geom = "text", x = 2026727, y = 366595.9, label = 'bold("*")', color = "blue", size = 5, parse = TRUE) + #USW00014742
+
+  annotate(geom = "text", x = 2482549, y = -50730.3, label = 'bold("(1.4±2.1)")', color = "blue", size = 3, parse = TRUE) + #USW00014758
+  annotate(geom = "text", x = 2682549, y = -50730.3, label = 'bold("*")', color = "blue", size = 5, parse = TRUE) + #USW00014758
+
+  annotate(geom = "text", x = 1596727, y = 120404.1, label = 'bold("(2.0±2.9)")', color = "blue", size = 3, parse = TRUE) + #USW00014768
+  annotate(geom = "text", x = 1786727, y = 120404.1, label = 'bold("*")', color = "blue", size = 5, parse = TRUE) + #USW00014768
+
+  annotate(geom = "text", x = -1380056, y = -1183855, label = 'bold("(3.8±1.4)")', color = "blue", size = 3, parse = TRUE) + #USW00093107
+  annotate(geom = "text", x = -1195056, y = -1183855, label = 'bold("*")', color = "blue", size = 5, parse = TRUE) + #USW00093107
+
+  annotate(geom = "text", x = -1470056, y = -1023855, label = 'bold("(4.2±3.5)")', color = "blue", size = 3, parse = TRUE) + #USW00093134
+  annotate(geom = "text", x = -1275056, y = -1023855, label = 'bold("*")', color = "blue", size = 5, parse = TRUE) + #USW00093134
   
   # Add the footnotes
   annotate(geom = "text", x = -991462, y = -2774255, label= 'bold("*")', color = "blue", size = 5.5, parse = TRUE) +
@@ -263,7 +274,7 @@ plot_usmap(data = statelists, regions = "state", values = "N") +
   geom_point(data = data.frame(x = -991462, y = -2519255), aes(x = x, y = y),  color = "red", size = 3.5, shape = 17) +
   annotate(geom = "text", x = 623538, y = -2509255, label= "ABCD sites with corresponding temperature data available", color = "blue", size = 4.2)
 
-ggsave("../plots/map_v2.tiff", dpi = 320, width = 8, height = 6)
+ggsave("../plots/map_020223.tiff", dpi = 320, width = 8, height = 6)
 ```
 
 
