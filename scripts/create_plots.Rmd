@@ -43,7 +43,7 @@ ggplot(climate_data) + aes(x = month_14d) +
         axis.title.y = element_text(size = 14)
   )
 
-# ggsave("../plots/participants_across_time_noyear_020223.tiff", dpi = 400, width = 6, height = 4)
+ggsave("../plots/participants_across_time_noyear_020323.tiff", dpi = 400, width = 6, height = 4)
 ```
 
 ```{r}
@@ -52,7 +52,7 @@ ggplot(climate_data) + aes(x = month_14d) +
 # 21 sites
 climate_plot <- climate_data %>% 
   mutate(station = recode(station,
-                          USW00093134 = "California (Los Angeles) 1",
+                          USW00093134 = "California (Los Angeles-CHLA)",
                           USC00085667 = "Florida (Miami)",
                           USC00421446 = "Utah",
                           USW00053908 = "Oklahoma",
@@ -60,7 +60,7 @@ climate_plot <- climate_data %>%
                           USC00356749 = "Oregon",
                           USC00046646 = "California (Menlo Park)",
                           USW00093107 = "California (La Jolla)",
-                          USC00049152 = "California (Los Angeles) 2",
+                          USC00049152 = "California (Los Angeles-UCLA)",
                           USW00000160 = "Colorado",
                           USW00012816 = "Florida (Gainesville)",
                           USW00093784 = "Maryland",
@@ -113,7 +113,7 @@ plot1 <- climate_plot %>% ggplot(aes(x = scale(dx90), y = scale(ksads_externaliz
         plot.subtitle = element_text(size = 23.5, hjust = 0.5, face = "bold"),
         strip.text = element_text(size = 18, face = "bold"),
         axis.ticks = element_line(size = 0.5))
-# ggsave(filename = "../plots/association_by_stations_21sites_020223.png", width = 18, height = 11, dpi = 620)
+# ggsave(filename = "../plots/association_by_stations_21sites_020323.png", width = 18, height = 11, dpi = 620)
 
 
 plot2 <- climate_plot %>% ggplot(aes(x = scale(dx90), y = scale(ksads_externalizing_exclude_attentation_symptoms_sum))) +
@@ -129,10 +129,10 @@ plot2 <- climate_plot %>% ggplot(aes(x = scale(dx90), y = scale(ksads_externaliz
         axis.title.y = element_text(size = 20, face = "bold"),
         plot.subtitle = element_text(size = 23.5, hjust = 0.5, face = "bold"),
         axis.ticks = element_line(size = 0.5))
-# ggsave(filename = "../plots/association_all_stations_21sites_020223.png", width = 8, height = 6, dpi = 620)
+# ggsave(filename = "../plots/association_all_stations_21sites_020323.png", width = 8, height = 6, dpi = 620)
 
 ggpubr::ggarrange(plot1, plot2, ncol = 1, heights = c(11, 7), widths = c(12, 7))
-ggsave(filename = "../plots/merged_020223.tiff", width = 18, height = 17, dpi = 320)
+ggsave(filename = "../plots/merged_020323.tiff", width = 21, height = 19, dpi = 320)
 ```
 
 
@@ -171,7 +171,8 @@ transformed_data <- usmap_transform(site_data)
 climate_data %>% 
   group_by(station) %>% 
   dplyr::summarise(Mean = round(mean(dx90, na.rm=TRUE), 1),
-            SD = round(sd(dx90, na.rm=TRUE), 1))
+            SD = round(sd(dx90, na.rm=TRUE), 1)) %>% 
+  mutate(mean_sd = paste0(Mean, "±", SD)) %>% View()
 ```
 
 ``` {r}
@@ -205,7 +206,7 @@ plot_usmap(data = statelists, regions = "state", values = "N") +
   annotate(geom = "text", x = 2312549, y = -352730.3, label = 'bold("(8.7±7.2)")', color = "blue", size = 3, parse = TRUE) + #USW00093784
   annotate(geom = "text", x = 2512549, y = -352730.3, label = 'bold("*")', color = "blue", size = 5, parse = TRUE) + #USW00093784
   
-  annotate(geom = "text", x = -992155.1, y = -500883.8, label = 'bold("(6.2±8.4)")', color = "blue", size = 3, parse = TRUE) + #USC00421446
+  annotate(geom = "text", x = -992155.1, y = -500883.8, label = 'bold("(6.3±8.4)")', color = "blue", size = 3, parse = TRUE) + #USC00421446 #6.2
   annotate(geom = "text", x = -802155.1, y = -500883.8, label = 'bold("*")', color = "blue", size = 5, parse = TRUE) + #USC00421446
   
   annotate(geom = "text", x = 800130.3, y = -278193, label = 'bold("(2.0±1.8)")', color = "blue", size = 3, parse = TRUE) + #USC00475474
@@ -232,7 +233,7 @@ plot_usmap(data = statelists, regions = "state", values = "N") +
   annotate(geom = "text", x = 2302549, y = -572730.3, label = 'bold("(9.3±7.6)")', color = "blue", size = 3, parse = TRUE) + #USW00013740
   annotate(geom = "text", x = 2502549, y = -572730.3, label = 'bold("*")', color = "blue", size = 5, parse = TRUE) + #USW00013740
 
-  annotate(geom = "text", x = 2082731, y = -1129255.3, label = 'bold("(3.5±3.1)")', color = "blue", size = 3, parse = TRUE) + #USW00013782
+  annotate(geom = "text", x = 2082731, y = -1129255.3, label = 'bold("(3.4±3.1)")', color = "blue", size = 3, parse = TRUE) + #USW00013782 #3.5
   annotate(geom = "text", x = 2282731, y = -1129255.3, label = 'bold("*")', color = "blue", size = 5, parse = TRUE) + #USW00013782
 
   annotate(geom = "text", x = 1836727, y = 366595.9, label = 'bold("(1.8±2.8)")', color = "blue", size = 3, parse = TRUE) + #USW00014742
@@ -256,7 +257,7 @@ plot_usmap(data = statelists, regions = "state", values = "N") +
   geom_point(data = data.frame(x = -991462, y = -2519255), aes(x = x, y = y),  color = "red", size = 3.5, shape = 17) +
   annotate(geom = "text", x = 623538, y = -2509255, label= "ABCD sites with corresponding temperature data available", color = "blue", size = 4.2)
 
-ggsave("../plots/map_020223.tiff", dpi = 320, width = 8, height = 6)
+ggsave("../plots/map_020323.tiff", dpi = 320, width = 8, height = 6)
 ```
 
 
