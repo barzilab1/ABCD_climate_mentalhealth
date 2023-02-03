@@ -17,9 +17,9 @@ demographics <- bind_rows(demographics_baseline, demographics_long) %>% select(-
 geo_data <- read_csv("data/geo_data.csv")
 family_relationship <- read_csv("data/family_relationship.csv") %>% 
   select(src_subject_id, rel_family_id)
-externalize_ksad_symptoms_p <- read_csv("data/externalize_ksad_symptoms_p.csv")
-site <- read_csv("data/site.csv")
-suicide_long <- read_csv("data/suicide_long.csv")
+externalize_ksad_symptoms_p <- read_csv("data/externalize_ksad_symptoms_p.csv") %>% select(-sex)
+site <- read_csv("data/site.csv") %>% select(-sex)
+suicide_long <- read_csv("data/suicide_long.csv") %>% select(-sex)
 climate_11sites <- read_csv("data/data_monthly.csv")
 climate_11sites <- climate_11sites[, c("station", "date", "dx90")]
 
@@ -42,7 +42,7 @@ climate_11sites <- climate_11sites %>%
     station == "USC00356749" ~ 6,
     station == "USC00046646" ~ 8,
     station == "USC00049152" ~ 9,
-    station == "USC00050848" ~ 2,
+    station == "USW00000160" ~ 2,
     station == "USW00093784" ~ 12,
     station == "USC00200228" ~ 13,
     station == "USC00421446" ~ 16,
@@ -135,11 +135,11 @@ dataset <- dataset %>%
 
 
 # merge with climate data - month, year, site
-dataset_14d_11sites <- left_join(dataset, climate_11sites %>% dplyr::rename(month_14d = month, year_14d = year)) %>% 
+dataset_14d_11sites <- dplyr::left_join(dataset, climate_11sites %>% dplyr::rename(month_14d = month, year_14d = year)) %>%
   # remove missing data of dx90
   filter(!is.na(dx90))
 
-dataset_14d_21sites <- left_join(dataset, climate_21sites %>% dplyr::rename(month_14d = month, year_14d = year)) %>% 
+dataset_14d_21sites <- dplyr::left_join(dataset, climate_21sites %>% dplyr::rename(month_14d = month, year_14d = year)) %>% 
   filter(!is.na(dx90))
 
 # filter from may to sep

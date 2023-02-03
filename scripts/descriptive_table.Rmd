@@ -48,7 +48,7 @@ write.csv(
     catDigits = 2,
     contDigits = 2
   ),
-  "../outputs/table1_020223.csv"
+  "../outputs/table1_020323.csv"
 )
 ```
 
@@ -69,6 +69,6 @@ climate_data %>%
   filter(dx90>0) %>% 
   group_by(station) %>% 
   dplyr::summarise(min_exclude0 = min(dx90))) %>% 
-  write.csv("../outputs/tableS3_020223.csv")
+  write.csv("../outputs/tableS3_020323.csv")
 ```
 

@@ -183,7 +183,7 @@ mod_SA_current_2 <- glmer(get_models(outcome = "SA_current_y", predictor = "scal
 tab_model(mod_SA_current_0, mod_SA_current_1, mod_SA_current_2, show.intercept = F)
 ```
 
-## Sensitivity analysis: data of 21 sites (Apr-Oct)
+## Sensitivity analysis: data of 11 sites (Apr-Oct)
 ```{r}
 mod_ksads_11s_0 <- lmer(get_models(outcome = "scale(ksads_externalizing_exclude_attentation_symptoms_sum)", predictor = "scale(dx90)", 
                            variables = var_headache_0, var_added = NULL), data = climate_data_11sites, 
