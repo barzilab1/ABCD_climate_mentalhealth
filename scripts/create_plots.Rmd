@@ -21,7 +21,7 @@ library(scales)
 ```{r}
 climate_data <- readRDS("../data/dataset_14d_4to10_21sites.rds") %>% 
   mutate(eventname = recode(eventname,
-                            baseline_year_1_arm_1 = "bl" ,
+                            baseline_year_1_arm_1 = "bl",
                             `1_year_follow_up_y_arm_1` = "1y",
                             `2_year_follow_up_y_arm_1` = "2y"),
          eventname = factor(eventname, c("bl", "1y", "2y")))
@@ -172,7 +172,7 @@ climate_data %>%
   group_by(station) %>% 
   dplyr::summarise(Mean = round(mean(dx90, na.rm=TRUE), 1),
             SD = round(sd(dx90, na.rm=TRUE), 1)) %>% 
-  mutate(mean_sd = paste0(Mean, "±", SD)) %>% View()
+  mutate(mean_sd = paste0(Mean, "±", SD))
 ```
 
 ``` {r}

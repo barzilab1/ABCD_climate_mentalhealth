@@ -26,18 +26,26 @@ climate_data_sens <- readRDS("../data/dataset_14d_5to9_21sites.rds")
 climate_data_beforeCovid <- climate_data %>% filter(year_14d < 2020)
 ## 11 SITES
 climate_data_11sites <- readRDS("../data/dataset_14d_4to10_11sites.rds")
+
+# climate_data <- climate_data %>%
+#   mutate(
+#     race = case_when(
+#       race_black == 1 ~ "Black",
+#       race_white == 1 ~ "White",
+#       race_aian == 1 ~ "AIAN",
+#       race_nhpi == 1 ~ "NHPI",
+#       race_asian == 1 ~ "Asian",
+#       race_other == 1 ~ "Other",
+#       race_mixed == 1 ~ "Mixed",
+#       TRUE ~ NA_character_
+#     )
+#   )
 ```
 
 # Define variables/covariates
 ```{r}
 var_headache_0 <- c("(1 | site_id_l_br/rel_family_id/src_subject_id)")
-# var_covariates_0 <- c("scale(interview_age)", "scale(interview_age)^2", "scale(interview_age)^3", "sex_br")
-# var_covariates_1 <- c("scale(interview_age)", "scale(interview_age)^2", "scale(interview_age)^3", "sex_br", "race_black", "race_white", "ethnicity_hisp")
 var_covariates_1 <- c("scale(interview_age)", "scale(interview_age)^2", "scale(interview_age)^3", "sex_br", "race_black", "race_white", "ethnicity_hisp", "scale(household_income)")
-# var_covariates_3 <- c(var_covariates_2, "scale(reshist_addr1_d1a)") # Residential history derived - gross residential density
-# var_covariates_4 <- c(var_covariates_2, "scale(reshist_addr1_walkindex)")
-# var_covariates_5 <- c(var_covariates_2, "scale(reshist_addr1_popdensity)")
-# var_covariates_6 <- c(var_covariates_2, "scale(reshist_addr1_d1a)", "scale(reshist_addr1_walkindex)")
 var_covariates_2 <- c(var_covariates_1, "scale(reshist_addr1_d1a)", "scale(reshist_addr1_walkindex)", "scale(reshist_addr1_popdensity)")
 ```
 
@@ -109,7 +117,7 @@ mod_beforeCovid_ksads_2 <- lmer(get_models(outcome = "scale(ksads_externalizing_
                                                     check.nobs.vs.nRE="ignore",
                                                     optimizer = "bobyqa", optCtrl = list(maxfun = 2e5)))
 
-# Table S5
+# Table S10
 tab_model(mod_beforeCovid_ksads_0, mod_beforeCovid_ksads_1, mod_beforeCovid_ksads_2, show.intercept = F)
 ```
 
@@ -137,7 +145,7 @@ mod_MaySep_ksads_2 <- lmer(get_models(outcome = "scale(ksads_externalizing_exclu
                                                optimizer = "bobyqa", optCtrl = list(maxfun = 2e5)))
 
 
-# Table S6
+# Table S11
 tab_model(mod_MaySep_ksads_0, mod_MaySep_ksads_1, mod_MaySep_ksads_2, show.intercept = F)
 ```
 
@@ -164,7 +172,7 @@ mod_ksads_current_2 <- lmer(get_models(outcome = "scale(ksads_present_externaliz
                                                 check.nobs.vs.nRE="ignore",
                                                 optimizer = "bobyqa", optCtrl = list(maxfun = 2e5)))
 
-# Table S7
+# Table S12
 tab_model(mod_ksads_current_0, mod_ksads_current_1, mod_ksads_current_2, show.intercept = F)
 ```
 
@@ -179,7 +187,7 @@ mod_SA_current_1 <- glmer(get_models(outcome = "SA_current_y", predictor = "scal
 mod_SA_current_2 <- glmer(get_models(outcome = "SA_current_y", predictor = "scale(dx90)", variables = var_headache_0, var_added = var_covariates_2),
                           data = climate_data, family = binomial, nAGQ = 0)
 
-# Table S8
+# Table S13
 tab_model(mod_SA_current_0, mod_SA_current_1, mod_SA_current_2, show.intercept = F)
 ```
 
@@ -206,10 +214,53 @@ mod_ksads_11s_2 <- lmer(get_models(outcome = "scale(ksads_externalizing_exclude_
                                         check.nobs.vs.nRE="ignore",
                                         optimizer = "bobyqa", optCtrl = list(maxfun = 2e5)))
 
-# Table S9
+# Table S14
 tab_model(mod_ksads_11s_0, mod_ksads_11s_1, mod_ksads_11s_2, show.intercept = F)
 ```
 
+## Sensitivity analysis: 2 main models  - interaction with race_Black and ethnicity_hisp
+```{r}
+# Table S9
+# externalizing
+mod_ksads_0_int <- lmer(get_models(outcome = "scale(ksads_externalizing_exclude_attentation_symptoms_sum)", predictor = "scale(dx90)", 
+                           variables = var_headache_0, var_added = var_covariates_1), data = climate_data, 
+                    control=lmerControl(check.nobs.vs.nlev = "ignore",
+                                        check.nobs.vs.rankZ = "ignore",
+                                        check.nobs.vs.nRE="ignore",
+                                        optimizer = "bobyqa", optCtrl = list(maxfun = 2e5)))
+
+mod_ksads_1_int <- lmer(get_models(outcome = "scale(ksads_externalizing_exclude_attentation_symptoms_sum)", predictor = "scale(dx90)", 
+                           variables = var_headache_0, var_added = c(var_covariates_1, "scale(dx90)*race_black")), data = climate_data, 
+                    control=lmerControl(check.nobs.vs.nlev = "ignore",
+                                        check.nobs.vs.rankZ = "ignore",
+                                        check.nobs.vs.nRE="ignore",
+                                        optimizer = "bobyqa", optCtrl = list(maxfun = 2e5)))
+
+mod_ksads_2_int <- lmer(get_models(outcome = "scale(ksads_externalizing_exclude_attentation_symptoms_sum)", predictor = "scale(dx90)", 
+                           variables = var_headache_0, var_added = c(var_covariates_1, "scale(dx90)*ethnicity_hisp")), data = climate_data, 
+                    control=lmerControl(check.nobs.vs.nlev = "ignore",
+                                        check.nobs.vs.rankZ = "ignore",
+                                        check.nobs.vs.nRE="ignore",
+                                        optimizer = "bobyqa", optCtrl = list(maxfun = 2e5)))
+
+tab_model(mod_ksads_0_int, mod_ksads_1_int, mod_ksads_2_int, show.intercept = F)
+
+
+# suicide
+mod_SA_0_int <- glmer(get_models(outcome = "SA_y", predictor = "scale(dx90)", variables = var_headache_0, 
+                                 var_added = var_covariates_1), 
+                  data = climate_data, family = binomial, nAGQ = 0)
+
+mod_SA_1_int <- glmer(get_models(outcome = "SA_y", predictor = "scale(dx90)", variables = var_headache_0, 
+                                 var_added = c(var_covariates_1, "scale(dx90)*race_black")), 
+                  data = climate_data, family = binomial, nAGQ = 0)
+
+mod_SA_2_int <- glmer(get_models(outcome = "SA_y", predictor = "scale(dx90)", variables = var_headache_0, 
+                                 var_added = c(var_covariates_1, "scale(dx90)*ethnicity_hisp")), 
+                  data = climate_data, family = binomial, nAGQ = 0)
+
+tab_model(mod_SA_0_int, mod_SA_1_int, mod_SA_2_int, show.intercept = F)
+```
 
 
 

@@ -1,0 +1,185 @@
+---
+title: "Race disparity analysis"
+author: "Kate Tran"
+date: "2023-04-03"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(dplyr)
+library(tableone)
+library(ggplot2)
+```
+
+```{r}
+climate_data <- readRDS("../data/dataset_14d_4to10_21sites.rds")
+climate_data_11sites <- readRDS("../data/dataset_14d_4to10_11sites.rds")
+```
+
+# Compare exposure (days/month with temp>90 degrees) between the self-identified race groups
+```{r}
+# Create the race groups # Non Hispanic White - All other (non_hispanic_white)
+# Need to check this as all Mixed race are also in other race groups - which is different from what's using in table 1.
+
+climate_data <- climate_data %>%
+  mutate(
+    race = case_when(
+      ethnicity_hisp == 0 & race_black == 1 ~ "Non-Hispanic Black",
+      ethnicity_hisp == 0 & race_white == 1 ~ "Non-Hispanic White",
+      ethnicity_hisp == 1 ~ "Hispanic",
+      TRUE ~ NA_character_
+    )
+  )
+```
+
+```{r}
+# A table by sites for age, sex, race, dx90 # Table S1
+climate_data_S1 <- climate_data %>% 
+  # age-years at 2-year follow-up
+  filter(eventname != "2_year_follow_up_y_arm_1") %>% 
+  select(src_subject_id, sex_br, interview_age, race, dx90, site_id_l_br) %>% 
+  left_join(
+    climate_data %>%  filter(eventname == "2_year_follow_up_y_arm_1") %>% select(src_subject_id, interview_age)
+  ) %>% 
+  mutate(age_years = interview_age/12)
+
+table1_vars <- c("age_years", "sex_br", "race", "dx90") #"race_white", "race_black", "race_aian", "race_nhpi",  "race_asian", "race_other", "race_mixed",
+                 # "ethnicity_hisp", "non_hispanic_white"
+table1_factors <- c("sex_br", "race")
+
+write.csv(
+  print(
+    CreateTableOne(
+      data = climate_data_S1 %>% distinct(src_subject_id, .keep_all = T),
+      vars = table1_vars,
+      factorVars = table1_factors,
+      strata = "site_id_l_br",
+      includeNA = T
+    ),
+    pDigits = 3,
+    catDigits = 2,
+    contDigits = 2
+  ),
+  "../outputs/descriptive_by_sites.csv"
+)
+```
+
+```{r}
+# race by sites
+# Table S5
+sites_11_sens <- climate_data_11sites %>% distinct(site_id_l_br) %>% pull()
+
+climate_data <- climate_data %>% 
+  mutate(
+    sites_sens = case_when(site_id_l_br %in% sites_11_sens ~ 1,
+                           TRUE ~ 0)
+  )
+
+CreateTableOne(
+  data = climate_data %>% distinct(src_subject_id, .keep_all = T),
+  strata = "sites_sens",
+  vars = "race",
+  factorVars = "race"
+)
+
+# write.csv(print(CreateTableOne(
+#   data = climate_data %>% distinct(src_subject_id, .keep_all = T),
+#   strata = "site_id_l_br",
+#   vars = "race",
+#   factorVars = "race"
+# )), "../outputs/race_by_sites.csv")
+```
+
+```{r}
+# Table S6
+CreateTableOne(
+  data = climate_data %>% distinct(src_subject_id, .keep_all = T),
+  strata = "race",
+  vars = "dx90"
+)
+
+# Table S7
+# Pos Hoc Anova comparing across 3 groups of race
+summary(aov(dx90 ~ race, climate_data))
+
+# Table S8
+# Tukey Honestly Significance Difference Test comparing each pair of groups
+TukeyHSD(aov(dx90 ~ race, climate_data), p.adj = "fdr")
+
+
+print(CreateTableOne(
+  data = climate_data %>% distinct(src_subject_id, .keep_all = T) %>% filter(race %in% c("Non-Hispanic Black", "Non-Hispanic White")),
+  strata = "race",
+  vars = "dx90"
+), pDigits = 5)
+
+print(CreateTableOne(
+  data = climate_data %>% distinct(src_subject_id, .keep_all = T) %>% filter(race %in% c("Non-Hispanic Black", "Hispanic")),
+  strata = "race",
+  vars = "dx90"
+), pDigits = 5)
+
+print(CreateTableOne(
+  data = climate_data %>% distinct(src_subject_id, .keep_all = T) %>% filter(race %in% c("Non-Hispanic White", "Hispanic")),
+  strata = "race",
+  vars = "dx90"
+), pDigits = 5)
+```
+
+# Plot of mean dx90 across race groups # Figure S2
+```{r}
+# create data
+plot_dat <- climate_data %>% 
+  distinct(src_subject_id, .keep_all = T) %>% 
+  group_by(race) %>% 
+  dplyr::summarize(N = n(),
+                   Mean = mean(dx90, na.rm=TRUE),
+                   SE = (sd(dx90, na.rm=TRUE))/(sqrt(N)),
+                   CI = 1.96*SE) %>% 
+  filter(!is.na(race)) %>% 
+  mutate()
+```
+
+```{r}
+# Get adjusted p-values for table S7
+# Hispanic & Black 0.76, rest <.001
+p_adj <- round(p.adjust(c(.76, .0001, .0001), method = "fdr"), 4)
+# 0.7600 0.0002 0.0002
+```
+
+```{r}
+# Label for significance level
+text_label <- data.frame(label = c("ns", "* * *", "* * *"),
+                              race = names(table(plot_dat$race)),
+                              x = c(1.5, 2.5, 2),
+                              y = c(8.2, 7.7, 8.7))
+
+# # Figure S2
+ggplot(plot_dat, aes(x = race, y = Mean, fill = race)) +  
+  geom_bar(stat = "identity", position = position_dodge(width = 0.9)) +
+  geom_errorbar(aes(ymin = Mean - CI, ymax = Mean + CI), position = position_dodge(0.9), width = 0.2, size = 0.5) +
+  xlab("") + ylab("Monthly extreme heat days (Mean, 95% CI)") +
+  guides(fill = "none") +
+  theme_bw() +
+  theme(axis.text.x = element_text(size = 10),
+        axis.text.y = element_text(size = 12),
+        axis.title.y = element_text(size = 12)) +
+  geom_text(data    = text_label,
+            mapping = aes(x = x, y = y, label = label),
+            size = 4, face = "bold") +
+  annotate("segment", x = 1, xend = 2, y = 8, yend = 8) +
+  annotate("segment", x = 1, xend = 3, y = 8.5, yend = 8.5) +
+  annotate("segment", x = 2, xend = 3, y = 7.5, yend = 7.5) +
+  scale_y_continuous(breaks = seq(0, 10, 2))
+
+ggsave(filename = "../plots/dx90mean_by_race_p.png", width = 5, height = 4, dpi = 620)
+```
+
+
+
+
+
