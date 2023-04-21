@@ -20,5 +20,6 @@
 3. In the data-scripts folder, run scripts in any order. These scripts go over the abcd instruments and create new variables and datasets that are placed in the “data” folder.
 4. Run the [merging.R](scripts/merging.R) script to create the dataset.
 5. Run the [descriptive_table.Rmd](scripts/descriptive_table.Rmd) to generate table 1 of the main paper.
-6. Run the [create_plots.Rmd](scripts/create_plots.Rmd) to create 2 figures for the paper.
-7. Run the [analysis.Rmd](scripts/analysis.Rmd) for mixed models.
+6. Run the [race_disparity_analysis.Rmd](scripts/race_disparity_analysis.Rmd) to generate tables for the race disparity analyses.
+7. Run the [create_plots.Rmd](scripts/create_plots.Rmd) to create 2 figures for the paper.
+8. Run the [analysis.Rmd](scripts/analysis.Rmd) for mixed models.
