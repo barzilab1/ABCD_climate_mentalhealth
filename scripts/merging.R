@@ -1,6 +1,7 @@
 library(readr)
 library(lubridate)
 library(dplyr)
+
 source("utility_fun.R")
 
 demographics_baseline <- read_csv("data/demographics_baseline.csv")
@@ -13,13 +14,13 @@ demo_race <- demographics_baseline[,grep("src|race|hisp|born_in_usa", colnames(d
 demographics_long <- merge(demographics_long, demo_race)
 demographics_long <- demographics_long[demographics_long$eventname != "baseline_year_1_arm_1",]
 
-demographics <- bind_rows(demographics_baseline, demographics_long) %>% select(-sex)
+demographics <- bind_rows(demographics_baseline, demographics_long)
 geo_data <- read_csv("data/geo_data.csv")
 family_relationship <- read_csv("data/family_relationship.csv") %>% 
   select(src_subject_id, rel_family_id)
-externalize_ksad_symptoms_p <- read_csv("data/externalize_ksad_symptoms_p.csv") %>% select(-sex)
-site <- read_csv("data/site.csv") %>% select(-sex)
-suicide_long <- read_csv("data/suicide_long.csv") %>% select(-sex)
+externalize_ksad_symptoms_p <- read_csv("data/externalize_ksad_symptoms_p.csv")
+site <- read_csv("data/site.csv")
+suicide_long <- read_csv("data/suicide_long.csv") 
 climate_11sites <- read_csv("data/data_monthly.csv")
 climate_11sites <- climate_11sites[, c("station", "date", "dx90")]
 
@@ -151,9 +152,6 @@ dataset_14d_4to10_11sites <- dataset_14d_11sites %>% filter(month_14d >= 4 & mon
 dataset_14d_4to10_21sites <- dataset_14d_21sites %>% filter(month_14d >= 4 & month_14d <= 10)
 
 
-# saveRDS(dataset_14d_11sites, file = "data/dataset_14d_11sites.rds")
-# saveRDS(dataset_14d_21sites, file = "data/dataset_14d_21sites.rds")
-# saveRDS(dataset_14d_5to9_11sites, file = "data/dataset_14d_5to9_11sites.rds")
 saveRDS(dataset_14d_5to9_21sites, file = "data/dataset_14d_5to9_21sites.rds")
 saveRDS(dataset_14d_4to10_11sites, file = "data/dataset_14d_4to10_11sites.rds")
 saveRDS(dataset_14d_4to10_21sites, file = "data/dataset_14d_4to10_21sites.rds")

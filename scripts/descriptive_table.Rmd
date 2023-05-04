@@ -53,7 +53,7 @@ write.csv(
 ```
 
 ```{r}
-# Table S3
+# Table S6
 # Create table for each weather station with extreme heat day
 # Minimum
 climate_data %>% 
@@ -69,6 +69,6 @@ climate_data %>%
   filter(dx90>0) %>% 
   group_by(station) %>% 
   dplyr::summarise(min_exclude0 = min(dx90))) %>% 
-  write.csv("../outputs/tableS3_020323.csv")
+  write.csv("../outputs/tableS6_020323.csv")
 ```
 

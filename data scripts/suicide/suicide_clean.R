@@ -22,7 +22,7 @@ ksad_y$SA_y <-(ksad_y$SA_current_y == 1 | ksad_y$SA_past_y == 1)*1
 ksad_y$SI_current_y <- apply(ksad_y[,which(grepl("ksads_23_(946|947|948|949|950|951)", colnames(ksad_y)))],1 ,function(x) {any(x == 1)*1})
 ksad_y$SI_past_y <- apply(ksad_y[,which(grepl("ksads_23_(957|958|959|960|961|962)", colnames(ksad_y)))],1 ,function(x) {any(x == 1)*1})
 ksad_y$SI_y <- (ksad_y$SI_current_y == 1 | ksad_y$SI_past_y == 1)*1
-## Those with both SA_y == 1 & SI_y == 1 will get SI_y == 0
+## Those with SA_y == 1 will get SI_y == 0
 ksad_y$SI_y[ksad_y$SA_y == 1] <- 0
 
 #combine ideation and attempt

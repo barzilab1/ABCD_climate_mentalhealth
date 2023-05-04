@@ -16,7 +16,7 @@ site_addr <- file.path(climate_mh_path, "ABCD_11sites_multi_stations.xlsx") %>% 
 station_multi <- site_addr %>% filter(!is.na(station)) %>% pull(station)
 
 # Get longitude and latitude of stations
-data_station_multi <- download_normal_climate(station = station_multi, mainURL = normal_climate_data_path)
+data_station_multi <- download_normal_climate(stations = station_multi, mainURL = normal_climate_data_path)
 station_coord <- data_station_multi %>% distinct(station, .keep_all = T) %>% select(station, latitude, longitude) %>% 
   setNames(c("station", "station_lat", "station_lon"))
 
@@ -38,15 +38,9 @@ site_station_coord_distance <- site_station_coord %>%
   filter(row_number() == 1)
 
 
-# write.csv(site_station_coord_distance, "data/ABCD_11sites_020123.csv")
-# write.csv(site_station_coord, "data/ABCD_21sites_multi_stations_020123.csv")
+
 
 # PART 2: Increase the bounding box of the website by d, select closet stations for all sites
-## Calculate d (the longest distance among 11 closet station)
-d <- max(site_station_coord_distance$distance, na.rm = T) #7669.472 meters
-
-## d will be used to increase the box on the website www.ncei.noaa.gov, then get the list of all stations according to each of 21 ABCD sites 
-## this step is done using the website
 
 # choose the closet station for each site
 multi_stations <- file.path(climate_mh_path, "ABCD_21sites_coordinates_converted_max_distance_012023_ev.xlsx") %>% read_excel(sheet = "multi_stations")
@@ -60,7 +54,7 @@ all_stations <- multi_stations %>%
   unique()
 
 # find the lon & lat of each station
-data_all_stations <- download_normal_climate(station = all_stations, mainURL = "https://www.ncei.noaa.gov/data/global-summary-of-the-month/access/")
+data_all_stations <- download_normal_climate(stations = all_stations, mainURL = "https://www.ncei.noaa.gov/data/global-summary-of-the-month/access/")
 # data_all_stations <- read.csv("data/data_all_stations_21_sites_020123.csv")
 # write.csv(data_all_stations, "data/data_all_stations_21_sites_020123.csv")
 

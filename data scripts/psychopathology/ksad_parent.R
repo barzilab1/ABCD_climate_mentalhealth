@@ -8,9 +8,6 @@ ksad_p <- load_instrument("abcd_ksad01", abcd_files_path)
 #555 and 888 will be treated as NA
 ksad_p[ksad_p == "888" | ksad_p == "555"] <- NA
 
-# ksad_p <- "~/Box Sync/2-ABCD Data Files/ABCD data/4.0/abcd_ksad01.txt" %>% read.csv(sep <- '\t',header <- TRUE, row.names=NULL, na.string <- c("","NA"), check.names=FALSE)
-# ksads_eating_disorder_diagnosis
-
 
 #################### externalizing Symptoms ####################
 externalize_ksad_p = ksad_p[,which(grepl("^(src|inter|event|sex|ksads_1[4-6]_([7-9][0-9]|10[0-9]|4[0-6][0-9]|39[4-9])_)", colnames(ksad_p)))]
@@ -50,6 +47,7 @@ for(i in 1:dim(pairs_items)[1]){
                                                 0, externalize_ksad_p[,new_col_name])
     print(summary(externalize_ksad_p[,c(new_col_name, e_1 , e_2)]))
 }
+
 #add "sustaining attention" symptom
 externalize_ksad_p$temp_adhd_17 = apply(externalize_ksad_p[,grepl("ksads_14_(7[6-9])_p", colnames(externalize_ksad_p))],1 ,function(x) {any(x == 1)*1})
 summary(externalize_ksad_p[,grepl("temp_adhd_17|ksads_14_(7[6-9])_p", colnames(externalize_ksad_p))])
@@ -187,45 +185,36 @@ externalize_ksad_p$ksads_externalizing_exclude_attentation_symptoms_sum = extern
 externalize_ksad_p = externalize_ksad_p[,!( grepl("temp_", colnames(externalize_ksad_p)))]
 
 
-# write.csv(file = "data/externalize_ksad_symptoms_p.csv", x = externalize_ksad_p, row.names = F, na = "")
-
-
-
-
 
 #################### Present externalizing symptom ####################
 #unlike suicide, here if 0 or NA then 0
 
 # ADHD present - 394:409, past: 410:425 (ksads_14_)
-# ADHD exclude attention present - 401:408, past: 417:424 (ksads_14_)
-# ODD present 91, 93, 95, 432:437  - past: 92, 94, 96, 439:444 (ksads_15_)
+# ADHD exclude attention present - 401:408, past: 417:424 (ksads_14_)  %%%% 84, 85, 88
+# ODD present 91, 93, 95, 432:437  - past: 92, 94, 96, 439:444 (ksads_15_) 
 # CONDUCT present 98, 100, 102, 104, 106, 447, 449, 451, 453, 455, 457, 459, 461, 463, 465 (ksads_16_)
 ## past 99, 101, 103, 105, 107, 448, 450, 452, 454, 456, 458, 460, 462, 464, 466 (ksads_16_)
-
-# externalize_ksad_p[, grepl("14_(40[1-8])", names(externalize_ksad_p))] %>% names() # ADHD exclude attention
-# externalize_ksad_p[, grepl("15_(9[135])|15_(43[2-7])", names(externalize_ksad_p))] %>% names() # ODD
-# externalize_ksad_p[, grepl("16_(98|(10[0246])|(44[79])|(45[13579])|(46[135]))", names(externalize_ksad_p))] %>% names() # CONDUCT
 
 
 # Present Ksad externalizing symptom sum scores excluding attention
 
 #create summary for adhd symptoms
 externalize_ksad_p$ksads_present_ADHD_exclude_attentation_symptoms_sum <- 
-  rowSums(externalize_ksad_p[, which(grepl("14_(40[1-8])", colnames(externalize_ksad_p)))], na.rm = T)
+  rowSums(externalize_ksad_p[, grep("14_(40[1-8]|8[458])", colnames(externalize_ksad_p))], na.rm = T)
 # fix rows with all NA (rowSums gave a number to all rows)
-externalize_ksad_p$ksads_present_ADHD_exclude_attentation_symptoms_sum[rowSums(is.na(externalize_ksad_p[, which(grepl("14_(40[1-8])", colnames(externalize_ksad_p), ignore.case=TRUE))])) == 8] <- NA
+externalize_ksad_p$ksads_present_ADHD_exclude_attentation_symptoms_sum[rowSums(is.na(externalize_ksad_p[, grep("14_(40[1-8]|8[458])", colnames(externalize_ksad_p))])) == 11] <- NA
 
 # summary for ODD
 externalize_ksad_p$ksads_present_ODD_symptoms_sum <- 
-  rowSums(externalize_ksad_p[, which(grepl("15_(9[135])|15_(43[2-7])", colnames(externalize_ksad_p)))], na.rm = T)
+  rowSums(externalize_ksad_p[, grep("15_(9[135])|15_(43[2-7])", colnames(externalize_ksad_p))], na.rm = T)
 #fix rows with all NA (rowSums gave a number to all rows)
-externalize_ksad_p$ksads_present_ODD_symptoms_sum[rowSums(is.na(externalize_ksad_p[, which(grepl("15_(9[135])|15_(43[2-7])", colnames(externalize_ksad_p), ignore.case=TRUE))])) == 9] <- NA
+externalize_ksad_p$ksads_present_ODD_symptoms_sum[rowSums(is.na(externalize_ksad_p[, grepl("15_(9[135])|15_(43[2-7])", colnames(externalize_ksad_p))])) == 9] <- NA
 
 # summary for CONDUCT
 externalize_ksad_p$ksads_present_CONDUCT_symptoms_sum <- 
   rowSums(externalize_ksad_p[, which(grepl("16_(98|(10[0246])|(44[79])|(45[13579])|(46[135]))", colnames(externalize_ksad_p)))], na.rm = T)
 #fix rows with all NA (rowSums gave a number to all rows)
-externalize_ksad_p$ksads_present_CONDUCT_symptoms_sum[rowSums(is.na(externalize_ksad_p[, which(grepl("16_(98|(10[0246])|(44[79])|(45[13579])|(46[135]))", colnames(externalize_ksad_p), ignore.case=TRUE))])) == 15] <- NA
+externalize_ksad_p$ksads_present_CONDUCT_symptoms_sum[rowSums(is.na(externalize_ksad_p[, grepl("16_(98|(10[0246])|(44[79])|(45[13579])|(46[135]))", colnames(externalize_ksad_p))])) == 15] <- NA
 
 externalize_ksad_p$ksads_present_externalizing_exclude_attentation_symptoms_sum <- 
   externalize_ksad_p$ksads_present_ADHD_exclude_attentation_symptoms_sum + externalize_ksad_p$ksads_present_ODD_symptoms_sum + externalize_ksad_p$ksads_present_CONDUCT_symptoms_sum

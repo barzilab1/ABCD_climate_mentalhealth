@@ -39,24 +39,41 @@ climate_data <- climate_data %>%
 ```{r}
 # A table by sites for age, sex, race, dx90 # Table S1
 climate_data_S1 <- climate_data %>% 
-  # age-years at 2-year follow-up
-  filter(eventname != "2_year_follow_up_y_arm_1") %>% 
-  select(src_subject_id, sex_br, interview_age, race, dx90, site_id_l_br) %>% 
-  left_join(
-    climate_data %>%  filter(eventname == "2_year_follow_up_y_arm_1") %>% select(src_subject_id, interview_age)
-  ) %>% 
-  mutate(age_years = interview_age/12)
+  select(src_subject_id, interview_age, sex_br, race, dx90, site_id_l_br) %>%
+  mutate(age_years = interview_age/12) 
 
-table1_vars <- c("age_years", "sex_br", "race", "dx90") #"race_white", "race_black", "race_aian", "race_nhpi",  "race_asian", "race_other", "race_mixed",
-                 # "ethnicity_hisp", "non_hispanic_white"
+  # %>%
+  # group_by(src_subject_id) %>%
+  # arrange(src_subject_id, desc(interview_age)) %>%
+  # filter(row_number() == 1) %>%
+  # mutate(age_years = interview_age/12) 
+
+
+table1_vars <- c("age_years","dx90") 
 table1_factors <- c("sex_br", "race")
 
 write.csv(
   print(
     CreateTableOne(
-      data = climate_data_S1 %>% distinct(src_subject_id, .keep_all = T),
-      vars = table1_vars,
+      data = climate_data_S1 %>% distinct(src_subject_id, site_id_l_br, .keep_all = T),
+      vars = table1_factors,
       factorVars = table1_factors,
+      strata = "site_id_l_br",
+      includeNA = T
+    ),
+    pDigits = 3,
+    catDigits = 2,
+    contDigits = 2
+  ),
+  "../outputs/descriptive_by_sites_distinct_id_and_site.csv"
+)
+
+
+write.csv(
+  print(
+    CreateTableOne(
+      data = climate_data_S1,
+      vars = table1_vars,
       strata = "site_id_l_br",
       includeNA = T
     ),
@@ -79,28 +96,26 @@ climate_data <- climate_data %>%
                            TRUE ~ 0)
   )
 
+
 CreateTableOne(
-  data = climate_data %>% distinct(src_subject_id, .keep_all = T),
+  data = climate_data %>% distinct(src_subject_id, sites_sens, .keep_all = T),
   strata = "sites_sens",
   vars = "race",
   factorVars = "race"
 )
 
-# write.csv(print(CreateTableOne(
-#   data = climate_data %>% distinct(src_subject_id, .keep_all = T),
-#   strata = "site_id_l_br",
-#   vars = "race",
-#   factorVars = "race"
-# )), "../outputs/race_by_sites.csv")
 ```
 
 ```{r}
-# Table S6
+# Table S7
 CreateTableOne(
-  data = climate_data %>% distinct(src_subject_id, .keep_all = T),
+  data = climate_data,
   strata = "race",
   vars = "dx90"
 )
+
+#Get number of unique participants from each race
+with(unique(climate_data[, c("src_subject_id", "race")]), table(race))
 
 # Table S7
 # Pos Hoc Anova comparing across 3 groups of race
@@ -110,31 +125,12 @@ summary(aov(dx90 ~ race, climate_data))
 # Tukey Honestly Significance Difference Test comparing each pair of groups
 TukeyHSD(aov(dx90 ~ race, climate_data), p.adj = "fdr")
 
-
-print(CreateTableOne(
-  data = climate_data %>% distinct(src_subject_id, .keep_all = T) %>% filter(race %in% c("Non-Hispanic Black", "Non-Hispanic White")),
-  strata = "race",
-  vars = "dx90"
-), pDigits = 5)
-
-print(CreateTableOne(
-  data = climate_data %>% distinct(src_subject_id, .keep_all = T) %>% filter(race %in% c("Non-Hispanic Black", "Hispanic")),
-  strata = "race",
-  vars = "dx90"
-), pDigits = 5)
-
-print(CreateTableOne(
-  data = climate_data %>% distinct(src_subject_id, .keep_all = T) %>% filter(race %in% c("Non-Hispanic White", "Hispanic")),
-  strata = "race",
-  vars = "dx90"
-), pDigits = 5)
 ```
 
 # Plot of mean dx90 across race groups # Figure S2
 ```{r}
 # create data
 plot_dat <- climate_data %>% 
-  distinct(src_subject_id, .keep_all = T) %>% 
   group_by(race) %>% 
   dplyr::summarize(N = n(),
                    Mean = mean(dx90, na.rm=TRUE),
@@ -142,14 +138,9 @@ plot_dat <- climate_data %>%
                    CI = 1.96*SE) %>% 
   filter(!is.na(race)) %>% 
   mutate()
+plot_dat
 ```
 
-```{r}
-# Get adjusted p-values for table S7
-# Hispanic & Black 0.76, rest <.001
-p_adj <- round(p.adjust(c(.76, .0001, .0001), method = "fdr"), 4)
-# 0.7600 0.0002 0.0002
-```
 
 ```{r}
 # Label for significance level
