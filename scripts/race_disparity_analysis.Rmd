@@ -124,7 +124,6 @@ summary(aov(dx90 ~ race, climate_data))
 # Table S8
 # Tukey Honestly Significance Difference Test comparing each pair of groups
 TukeyHSD(aov(dx90 ~ race, climate_data), p.adj = "fdr")
-
 ```
 
 # Plot of mean dx90 across race groups # Figure S2
@@ -147,7 +146,7 @@ plot_dat
 text_label <- data.frame(label = c("ns", "* * *", "* * *"),
                               race = names(table(plot_dat$race)),
                               x = c(1.5, 2.5, 2),
-                              y = c(8.2, 7.7, 8.7))
+                              y = c(8.5, 8.0, 9.0))
 
 # # Figure S2
 ggplot(plot_dat, aes(x = race, y = Mean, fill = race)) +  
@@ -162,9 +161,9 @@ ggplot(plot_dat, aes(x = race, y = Mean, fill = race)) +
   geom_text(data    = text_label,
             mapping = aes(x = x, y = y, label = label),
             size = 4, face = "bold") +
-  annotate("segment", x = 1, xend = 2, y = 8, yend = 8) +
-  annotate("segment", x = 1, xend = 3, y = 8.5, yend = 8.5) +
-  annotate("segment", x = 2, xend = 3, y = 7.5, yend = 7.5) +
+  annotate("segment", x = 1, xend = 2, y = 8.3, yend = 8.3) +
+  annotate("segment", x = 1, xend = 3, y = 8.8, yend = 8.8) +
+  annotate("segment", x = 2, xend = 3, y = 7.8, yend = 7.8) +
   scale_y_continuous(breaks = seq(0, 10, 2))
 
 ggsave(filename = "../plots/dx90mean_by_race_p.png", width = 5, height = 4, dpi = 620)
