@@ -47,7 +47,7 @@ ggsave("../plots/participants_across_time_noyear_020323.tiff", dpi = 400, width 
 ```
 
 ```{r}
-# Figure 1
+# Figure 2
 # The association between extreme heat and KSADS externalizing scores by stations
 # 21 sites
 climate_plot <- climate_data %>% 
@@ -135,9 +135,36 @@ ggpubr::ggarrange(plot1, plot2, ncol = 1, heights = c(11, 7), widths = c(12, 7))
 ggsave(filename = "../plots/merged_020323.tiff", width = 21, height = 19, dpi = 320)
 ```
 
+```{r}
+# Check the coefficients of relationships
+# lm(scale(dx90) ~ scale(ksads_externalizing_exclude_attentation_symptoms_sum), data = climate_plot %>% filter(station == "California (La Jolla)"))
+# lm(scale(dx90) ~ scale(ksads_externalizing_exclude_attentation_symptoms_sum), data = climate_plot %>% filter(station == "California (Los Angeles-CHLA)"))
+# lm(scale(dx90) ~ scale(ksads_externalizing_exclude_attentation_symptoms_sum), data = climate_plot %>% filter(station == "California (Los Angeles-UCLA)"))
+# lm(scale(dx90) ~ scale(ksads_externalizing_exclude_attentation_symptoms_sum), data = climate_plot %>% filter(station == "California (Menlo Park)"))
+# lm(scale(dx90) ~ scale(ksads_externalizing_exclude_attentation_symptoms_sum), data = climate_plot %>% filter(station == "Colorado"))
+# lm(scale(dx90) ~ scale(ksads_externalizing_exclude_attentation_symptoms_sum), data = climate_plot %>% filter(station == "Connecticut"))
+# lm(scale(dx90) ~ scale(ksads_externalizing_exclude_attentation_symptoms_sum), data = climate_plot %>% filter(station == "Florida (Gainesville)"))
+# lm(scale(dx90) ~ scale(ksads_externalizing_exclude_attentation_symptoms_sum), data = climate_plot %>% filter(station == "Florida (Miami)"))
+# lm(scale(dx90) ~ scale(ksads_externalizing_exclude_attentation_symptoms_sum), data = climate_plot %>% filter(station == "Maryland"))
+# lm(scale(dx90) ~ scale(ksads_externalizing_exclude_attentation_symptoms_sum), data = climate_plot %>% filter(station == "Michigan"))
+# lm(scale(dx90) ~ scale(ksads_externalizing_exclude_attentation_symptoms_sum), data = climate_plot %>% filter(station == "Minnesota"))
+# lm(scale(dx90) ~ scale(ksads_externalizing_exclude_attentation_symptoms_sum), data = climate_plot %>% filter(station == "Missouri"))
+# lm(scale(dx90) ~ scale(ksads_externalizing_exclude_attentation_symptoms_sum), data = climate_plot %>% filter(station == "New York"))
+# lm(scale(dx90) ~ scale(ksads_externalizing_exclude_attentation_symptoms_sum), data = climate_plot %>% filter(station == "Oklahoma"))
+# lm(scale(dx90) ~ scale(ksads_externalizing_exclude_attentation_symptoms_sum), data = climate_plot %>% filter(station == "Oregon"))
+# lm(scale(dx90) ~ scale(ksads_externalizing_exclude_attentation_symptoms_sum), data = climate_plot %>% filter(station == "Pennsylvania"))
+# lm(scale(dx90) ~ scale(ksads_externalizing_exclude_attentation_symptoms_sum), data = climate_plot %>% filter(station == "South Carolina"))
+# lm(scale(dx90) ~ scale(ksads_externalizing_exclude_attentation_symptoms_sum), data = climate_plot %>% filter(station == "Utah"))
+# lm(scale(dx90) ~ scale(ksads_externalizing_exclude_attentation_symptoms_sum), data = climate_plot %>% filter(station == "Vermont"))
+# lm(scale(dx90) ~ scale(ksads_externalizing_exclude_attentation_symptoms_sum), data = climate_plot %>% filter(station == "Virginia"))
+# lm(scale(dx90) ~ scale(ksads_externalizing_exclude_attentation_symptoms_sum), data = climate_plot %>% filter(station == "Wisconsin"))
+
+# table(climate_plot$station)
+```
+
 
 ```{r}
-# Figure 2
+# Figure 1
 # Map of stations
 statelists <- data.frame(
   stringsAsFactors = FALSE,
