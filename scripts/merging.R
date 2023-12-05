@@ -15,12 +15,15 @@ demographics_long <- merge(demographics_long, demo_race)
 demographics_long <- demographics_long[demographics_long$eventname != "baseline_year_1_arm_1",]
 
 demographics <- bind_rows(demographics_baseline, demographics_long)
+
 geo_data <- read_csv("data/geo_data.csv")
 family_relationship <- read_csv("data/family_relationship.csv") %>% 
   select(src_subject_id, rel_family_id)
 externalize_ksad_symptoms_p <- read_csv("data/externalize_ksad_symptoms_p.csv")
 site <- read_csv("data/site.csv")
 suicide_long <- read_csv("data/suicide_long.csv") 
+
+
 climate_11sites <- read_csv("data/data_monthly.csv")
 climate_11sites <- climate_11sites[, c("station", "date", "dx90")]
 
@@ -136,24 +139,27 @@ dataset <- dataset %>%
 
 
 # merge with climate data - month, year, site
-dataset_14d_11sites <- dplyr::left_join(dataset, climate_11sites %>% dplyr::rename(month_14d = month, year_14d = year)) %>%
-  # remove missing data of dx90
-  filter(!is.na(dx90))
+dataset_14d_11sites <- dplyr::left_join(dataset, climate_11sites %>% dplyr::rename(month_14d = month, year_14d = year)) 
 
-dataset_14d_21sites <- dplyr::left_join(dataset, climate_21sites %>% dplyr::rename(month_14d = month, year_14d = year)) %>% 
-  filter(!is.na(dx90))
+dataset_14d_21sites <- dplyr::left_join(dataset, climate_21sites %>% dplyr::rename(month_14d = month, year_14d = year))
+
 
 # filter from may to sep
-# dataset_14d_5to9_11sites <- dataset_14d_11sites %>% filter(month_14d >= 5 & month_14d <= 9)
-dataset_14d_5to9_21sites <- dataset_14d_21sites %>% filter(month_14d >= 5 & month_14d <= 9)
+dataset_14d_5to9_21sites <- dataset_14d_21sites %>% filter(month_14d >= 5 & month_14d <= 9 & !src_subject_id %in% ids_to_remove)
 
 # filter from apr to oct
-dataset_14d_4to10_11sites <- dataset_14d_11sites %>% filter(month_14d >= 4 & month_14d <= 10)
-dataset_14d_4to10_21sites <- dataset_14d_21sites %>% filter(month_14d >= 4 & month_14d <= 10)
+dataset_14d_4to10_11sites <- dataset_14d_11sites %>% filter(month_14d >= 4 & month_14d <= 10 & !src_subject_id %in% ids_to_remove)
+dataset_14d_4to10_21sites <- dataset_14d_21sites %>% filter(month_14d >= 4 & month_14d <= 10 & !src_subject_id %in% ids_to_remove)
 
+all_data = dataset_14d_21sites %>%
+  mutate(
+    sites_21_4to10 = case_when(month_14d >= 4 & month_14d <= 10 & !is.na(dx90) ~ 1,
+                               TRUE ~ 0)
+  )
 
 saveRDS(dataset_14d_5to9_21sites, file = "data/dataset_14d_5to9_21sites.rds")
 saveRDS(dataset_14d_4to10_11sites, file = "data/dataset_14d_4to10_11sites.rds")
 saveRDS(dataset_14d_4to10_21sites, file = "data/dataset_14d_4to10_21sites.rds")
+saveRDS(all_data, file = "data/all_data.rds")
 
 

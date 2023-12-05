@@ -16,8 +16,8 @@ library(ggplot2)
 ```
 
 ```{r}
-climate_data <- readRDS("../data/dataset_14d_4to10_21sites.rds")
-climate_data_11sites <- readRDS("../data/dataset_14d_4to10_11sites.rds")
+climate_data <- readRDS("../data/dataset_14d_4to10_21sites.rds") %>% filter(!is.na(dx90))
+climate_data_11sites <- readRDS("../data/dataset_14d_4to10_11sites.rds") %>% filter(!is.na(dx90))
 ```
 
 # Compare exposure (days/month with temp>90 degrees) between the self-identified race groups
@@ -94,14 +94,36 @@ climate_data <- climate_data %>%
   mutate(
     sites_sens = case_when(site_id_l_br %in% sites_11_sens ~ 1,
                            TRUE ~ 0)
-  )
+  ) 
 
+write.csv(
+  print(
+    CreateTableOne(
+      data = climate_data %>% distinct(src_subject_id, sites_sens, .keep_all = T),
+      strata = "sites_sens",
+      vars = "race",
+      factorVars = "race"
+      ),
+    pDigits = 3,
+    catDigits = 2,
+    contDigits = 2
+    ),
+  "../outputs/21vs11_ST5.csv"
+)
 
-CreateTableOne(
-  data = climate_data %>% distinct(src_subject_id, sites_sens, .keep_all = T),
-  strata = "sites_sens",
-  vars = "race",
-  factorVars = "race"
+write.csv(
+  print(
+    CreateTableOne(
+      data = climate_data %>% filter(!is.na(ksads_externalizing_exclude_attentation_symptoms_sum)) %>% distinct(src_subject_id, sites_sens, .keep_all = T),
+      strata = "sites_sens",
+      vars = "race",
+      factorVars = "race"
+      ),
+    pDigits = 3,
+    catDigits = 2,
+    contDigits = 2
+    ),
+  "../outputs/21vs11_ST5_only_included.csv"
 )
 
 ```
@@ -154,19 +176,18 @@ ggplot(plot_dat, aes(x = race, y = Mean, fill = race)) +
   geom_errorbar(aes(ymin = Mean - CI, ymax = Mean + CI), position = position_dodge(0.9), width = 0.2, size = 0.5) +
   xlab("") + ylab("Monthly extreme heat days (Mean, 95% CI)") +
   guides(fill = "none") +
-  theme_bw() +
-  theme(axis.text.x = element_text(size = 10),
-        axis.text.y = element_text(size = 12),
-        axis.title.y = element_text(size = 12)) +
   geom_text(data    = text_label,
             mapping = aes(x = x, y = y, label = label),
-            size = 4, face = "bold") +
+            vjust = 0.25, size = 5) +
+  theme_bw() +
+  theme(text = element_text(size = 14),
+        axis.text=element_text(size=14),) +
   annotate("segment", x = 1, xend = 2, y = 8.3, yend = 8.3) +
   annotate("segment", x = 1, xend = 3, y = 8.8, yend = 8.8) +
   annotate("segment", x = 2, xend = 3, y = 7.8, yend = 7.8) +
   scale_y_continuous(breaks = seq(0, 10, 2))
 
-ggsave(filename = "../plots/dx90mean_by_race_p.png", width = 5, height = 4, dpi = 620)
+ggsave(filename = "../plots/dx90mean_by_race_p.png", width = 7, height = 5, dpi = 620)
 ```
 
 

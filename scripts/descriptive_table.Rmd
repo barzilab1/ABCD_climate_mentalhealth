@@ -12,29 +12,31 @@ knitr::opts_chunk$set(echo = TRUE)
 ```{r}
 library(dplyr)
 library(tableone)
-library(tableone)
 ```
 
 ```{r}
 # Create wide data
-climate_data <- readRDS("../data/dataset_14d_4to10_21sites.rds")
+climate_data <- readRDS("../data/dataset_14d_4to10_21sites.rds") %>% filter(!is.na(dx90))
 
 climate_data <- climate_data %>% 
-  select(matches("src|event|sex_|race|ethnicity|interview|edu|income|SA_|externalizing_exclude_attentation|reshist|site|dx90|station")) %>% 
+  select(matches("src|event|sex_|race|ethnicity|interview|highschool|bachelor|master|income|SA_|externalizing_exclude_attentation|reshist|site|dx90|station")) %>% 
   mutate(eventname = factor(eventname, c("baseline_year_1_arm_1", "1_year_follow_up_y_arm_1", "2_year_follow_up_y_arm_1")),
          age_years = interview_age/12)
 ```
 
 ```{r}
 # Create table 1
-table1_vars <- c("age_years", "sex_br", "race_white", "race_black", "race_aian", "race_nhpi",  "race_asian", "race_other", "race_mixed",
-                 "ethnicity_hisp", "household_income", "parents_avg_edu", 
-                 "reshist_addr1_d1a", "reshist_addr1_popdensity", "reshist_addr1_walkindex", 
-                 "dx90", "ksads_externalizing_exclude_attentation_symptoms_sum", "ksads_present_externalizing_exclude_attentation_symptoms_sum",
-                 "SA_y", "SA_current_y")
 table1_factors <- c("sex_br", "race_white", "race_black", "race_aian", "race_nhpi",  "race_asian", "race_other", "race_mixed",
-                 "ethnicity_hisp", "SA_y", "SA_current_y")
+                 "ethnicity_hisp", "highschool_below", "highschool_diploma", "post_highschooler_education", "bachelor", "master_above", 
+                 "SA_y", "SA_current_y")
 
+table1_vars <- c("age_years", "household_income", table1_factors,
+                 "reshist_addr1_d1a", "reshist_addr1_popdensity", "reshist_addr1_walkindex", "reshist_addr1_coi_he_green",
+                 "dx90", "ksads_externalizing_exclude_attentation_symptoms_sum", "ksads_present_externalizing_exclude_attentation_symptoms_sum")
+```
+
+```{r}
+# Create table 1
 write.csv(
   print(
     CreateTableOne(
@@ -48,7 +50,7 @@ write.csv(
     catDigits = 2,
     contDigits = 2
   ),
-  "../outputs/table1_020323.csv"
+  "../outputs/table1.csv"
 )
 ```
 
@@ -69,6 +71,35 @@ climate_data %>%
   filter(dx90>0) %>% 
   group_by(station) %>% 
   dplyr::summarise(min_exclude0 = min(dx90))) %>% 
-  write.csv("../outputs/tableS6_020323.csv")
+  write.csv("../outputs/tableS6.csv")
 ```
 
+```{r}
+dataset = readRDS("../data/all_data.rds") %>% 
+  mutate(eventname = factor(eventname, c("baseline_year_1_arm_1", "1_year_follow_up_y_arm_1", "2_year_follow_up_y_arm_1")),
+         age_years = interview_age/12) 
+
+vars =  c("sex_br", "race_white", "race_black", "race_aian", "race_nhpi",  "race_asian", "race_other", "race_mixed",
+          "ethnicity_hisp")
+
+dataset_included = unique(dataset[dataset$sites_21_4to10 ==1 & !is.na(dataset$ksads_externalizing_exclude_attentation_symptoms_sum), c( "src_subject_id" ,vars, "sites_21_4to10")])
+dataset_not_included  = unique(dataset[!dataset$src_subject_id %in% dataset_included$src_subject_id, c( "src_subject_id" ,vars)])
+dataset_not_included$sites_21_4to10 = 0
+dataset = plyr::rbind.fill(dataset_included, dataset_not_included)
+
+write.csv(
+print(
+    CreateTableOne(
+      data = dataset,
+      vars = vars,
+      factorVars = vars,
+      strata = "sites_21_4to10"
+    ),
+    pDigits = 3,
+    catDigits = 2,
+    contDigits = 2,
+    missing = T
+  ),
+  "../outputs/compare_included_kids_vs_not.csv"
+)
+```

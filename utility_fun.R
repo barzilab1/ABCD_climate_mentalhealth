@@ -1,5 +1,5 @@
 library(readr)
-library(weathermetrics)
+# library(weathermetrics)
 library(purrr)
 library(RCurl)
 library(dplyr)
@@ -49,8 +49,6 @@ load_instrument <- function(file_name, file_path) {
     })
     
   }
-  
-  
   return(instrument)
 }
 
@@ -75,24 +73,10 @@ download_normal_climate <- function(stations, mainURL) {
   
   urls <- paste0(mainURL, stations, ".csv" )
   
-  
-  stations_contents <- list()
-  
-  for (i in 1:length(urls)) {
-    station_data <-
-      map(urls[i], ~ tryCatch(
-        read.csv(text = getURL(urls[i])),
-        error = function(e)
-          NULL
-      )) #%>% plyr::mutate(stations = stations[i])
-    # stations_contents[[length(stations_contents) + 1]] <- station_data
-    stations_contents[[stations[i]]] <- station_data
-  }
-  # names(stations_contents) <- stations
+  station_data <- map(urls, ~ tryCatch( read.csv(text = getURL(.)), error = function(e) e)) 
   
   stations_merge <-
-    map(stations_contents, function(x) x[[1]]) %>%
-    map(., data.frame) %>%
+    map(station_data, data.frame) %>%
     # remove unneeded columns
     map(., function(x) {x %>% select(-contains(c("flag", "_ATTRIBUTES")))}) %>% 
     bind_rows() %>% 
@@ -100,4 +84,6 @@ download_normal_climate <- function(stations, mainURL) {
   
   return(stations_merge)
 }
+
+
 
