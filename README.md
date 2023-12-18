@@ -1,4 +1,3 @@
-##########
 # ABCD Extreme heat and mental health
 
 
